@@ -342,8 +342,13 @@ function cardHTML(ep){ const im = ep.imdb==null?'n/a':ep.imdb;
 function showTip(html, x, y){ tip.innerHTML=html; tip.style.display='block';
   const w=tip.offsetWidth,h=tip.offsetHeight; let lx=x+16, ly=y+16;
   if(lx+w>window.innerWidth-10) lx=x-w-16; if(ly+h>window.innerHeight-10) ly=y-h-16;
+  lx=Math.max(8,Math.min(lx,window.innerWidth-w-8));
+  ly=Math.max(8,Math.min(ly,window.innerHeight-h-8));
   tip.style.left=lx+'px'; tip.style.top=ly+'px'; }
 function hideTip(){ tip.style.display='none'; }
+/* touch: no mouseleave, so dismiss the tip on tap-elsewhere or scroll */
+document.addEventListener('touchstart',ev=>{ try{ if(!ev.target.closest('circle')) hideTip(); }catch(e){ hideTip(); } },{passive:true});
+window.addEventListener('scroll',hideTip,{passive:true});
 
 /* ================= VERSUS CHART ================= */
 const VW=1000, VH=520, VL=56, VR=20, VT=70, VB=44;
