@@ -1,0 +1,6 @@
+build_*.py
+data.json
+peaktv.json
+imdb/
+shots/
+verification-report.md
