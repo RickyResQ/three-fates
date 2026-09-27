@@ -8,9 +8,9 @@ INK = (51, 48, 46)
 MUTED = (138, 123, 102)
 LINE = (229, 214, 190)
 CLARET = (153, 15, 61)
-SHOWS = [('The Walking Dead', (194, 59, 34)),
-         ('Game of Thrones', (154, 122, 26)),
-         ('Breaking Bad', (30, 122, 76))]
+SHOWS = [('The Walking Dead', (213, 94, 0)),
+         ('Game of Thrones', (0, 114, 178)),
+         ('Breaking Bad', (230, 159, 0))]
 SHORT = {'The Walking Dead': 'TWD', 'Game of Thrones': 'GoT', 'Breaking Bad': 'BB'}
 
 SERIF = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
