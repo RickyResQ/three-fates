@@ -199,6 +199,38 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 .obit-ph h4{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
 .ph-tag{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.2em;color:var(--accent);margin-bottom:12px}
 .ph-text{font-family:var(--serif);font-style:italic;color:var(--faint);font-size:15px;margin:12px 0 0}
+
+/* ---------- v4: verdict headlines, rhythm, color discipline ---------- */
+.badge.ongoing{background:var(--ink);border-color:var(--ink)}
+.done{color:var(--ink)}
+.giantstat .n{font-size:clamp(72px,9vw,140px)}
+.secstat-num{font-size:clamp(54px,7vw,92px)}
+.verdict{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.6vw,50px);line-height:1.1;margin:0 0 12px;max-width:24ch;letter-spacing:-.01em}
+.showsec{display:flex;flex-direction:column}
+.secnum{order:1}.verdict{order:2}.showmeta{order:3}.secstat{order:4}.chartwrap{order:5}.showsec .cap{order:6}.moments{order:7}.obit{order:8}
+.showmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.showname{font-family:var(--serif);font-size:19px}
+/* v4: chart-first on even sections — CSS only, DOM identical (council: gemini) */
+.showsec:nth-of-type(even) .chartwrap{order:4}
+.showsec:nth-of-type(even) .secstat{order:5}
+.showsec:nth-of-type(even) .cap{order:6}
+
+/* ---------- v4: quiz as oversized tappable cards ---------- */
+.quizbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.quizbtn{padding:28px 18px;font-family:var(--serif);font-size:20px;border-radius:14px;line-height:1.3}
+.quizchart svg{width:100%;height:auto;display:block;margin:4px 0 14px}
+@media (max-width:760px){.quizbtns{grid-template-columns:1fr}}
+
+/* ---------- v4: full-bleed bridge comparison chart ---------- */
+.bridge{margin:96px calc(50% - 50vw) 0;border-top:3px solid var(--ink);border-bottom:1px solid var(--line);padding:26px 0 22px}
+.bridge-inner{max-width:1180px;margin:0 auto;padding:0 26px}
+.bridge h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.6vw,52px);margin:0 0 8px;line-height:1.08;letter-spacing:-.01em}
+.bridge h2 em{color:var(--muted)}
+.bridge-lede{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:17px;margin:0 0 18px;max-width:64ch}
+svg.compare{width:100%;height:auto;display:block}
+.dlabel{cursor:pointer}
+.dlabel:focus{outline:none}
+.dlabel:focus-visible text{text-decoration:underline}
 </style>
 <script data-goatcounter="https://rickyresq.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -274,17 +306,42 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
     <button class="quizbtn" data-show="Breaking Bad">Breaking Bad</button>
   </div>
   <div id="quizhint"></div>
-  <div id="quizanswer" hidden><p class="payoff"><strong>The Walking Dead.</strong> 17.29 million at the peak, 2.27 million at the end, the biggest rise and the longest fall ever measured on cable.</p></div>
+  <div id="quizanswer" hidden><div id="quizchart"></div><p class="payoff"><strong>The Walking Dead.</strong> 17.29 million at the peak, 2.27 million at the end, the biggest rise and the longest fall ever measured on cable.</p></div>
+</section>
+
+<section class="bridge" aria-label="Six dramas on one chart">
+  <div class="bridge-inner">
+    <div class="kicker">The bridge</div>
+    <h2>Six premieres, 522 episodes, <em>one chart.</em></h2>
+    <p class="bridge-lede">Every drama on this page, 2004 to 2026, on one ruler. Tap a show to isolate it; tap again to bring the rest back.</p>
+    <div id="cmp-dramas">
+      <div class="vizhead">
+        <div class="vtitle">Six fates, one ruler. <em>every episode, measured the old way</em></div>
+        <div class="viztools">
+          <div class="xtoggle" role="group" aria-label="Horizontal axis">
+            <button class="xbtn on" data-x="air" aria-pressed="true">Air date</button>
+            <button class="xbtn" data-x="ep" aria-pressed="false">Episode #</button>
+          </div>
+          <div class="ytoggle xtoggle" role="group" aria-label="Vertical axis scale">
+            <button class="xbtn on" data-y="lin" aria-pressed="true">Linear</button>
+            <button class="xbtn" data-y="log" aria-pressed="false">Log</button>
+          </div>
+          <button class="dotsbtn" aria-pressed="false">Dots only</button>
+          <span class="yearout"></span>
+          <button class="playbtn">&#9654; Play it</button>
+        </div>
+      </div>
+      <svg class="compare" viewBox="0 0 1000 520" role="img" aria-label="Comparison chart: per-episode viewership for six dramas"></svg>
+      <div class="cap"></div>
+    </div>
+  </div>
 </section>
 
 
 <section class="showsec" id="show-0">
   <div class="secnum">I.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#D55E00"></span>
-    <h2>The Walking Dead</h2><span class="badge">Complete</span>
-  </div>
-  <div class="showmeta">AMC · 2010-2022 · 177 episodes</div>
+  <h2 class="verdict">The conditions that drew this curve will never exist again.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#D55E00"></span><span class="showname">The Walking Dead</span><span>AMC · 2010-2022 · 177 episodes</span><span class="badge">Complete</span></div>
   
   <div class="chartwrap">
     <svg class="chart" id="chart-0" viewBox="0 0 1000 420" role="img" aria-label="The Walking Dead per-episode viewership"></svg>
@@ -295,16 +352,13 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="twd-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="5" data-me="1" aria-label="Show moment 1 on the chart">1</button><div><strong>S5E1 “No Sanctuary”</strong> · Oct 12, 2014, 17.29M viewers, IMDb 9.6.<br>The peak of cable television: 17.29M, the biggest scripted audience of the decade.</div></li>
 <li id="twd-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="7" data-me="1" aria-label="Show moment 2 on the chart">2</button><div><strong>S7E1 “The Day Will Come When You Won&#x27;t Be”</strong> · Oct 23, 2016, 17.03M viewers, IMDb 9.3.<br>Negan's premiere drew 17.03M, the last great night. The bleed started the week after.</div></li>
 <li id="twd-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="10" data-me="21" aria-label="Show moment 3 on the chart">3</button><div><strong>S10E21 “Diverged”</strong> · Mar 28, 2021, 1.94M viewers, IMDb 4.1.<br>The fans' verdict, years later: IMDb 4.1. The lowest-rated episode of the entire run.</div></li></ol>
-  <article class="obit"><h3>The Death</h3><p>Sunday, October 12, 2014. 17.29 million people watched the season 5 premiere, “No Sanctuary.” No scripted series on any network, before or since, has touched that number. For one night, America still had a single campfire.</p><p>Then came the longest, steadiest bleed ever measured on television: season averages of 14.38 million, then 13.15, then 11.35, then 7.81, then under 5, then under 3, then 1.69. In November 2022, 2.27 million watched the finale. Eighty-seven percent of the peak audience was gone.</p><aside class="pullquote"><p>“The conditions that drew this curve will never exist again.”</p><div class="attr">From “The Death,” below</div></aside><p>It was not one bad episode. Negan’s premiere in October 2016 drew 17.03 million, the last great night, and the show never recovered its momentum. The universe kept expanding while the mothership shrank: spinoffs multiplying as the audience divided. And the ocean tripled around it: 211 scripted series in 2009, 599 by 2022. Attention did not leave television. It fragmented, and this was the thing it fragmented away from.</p><p>Nothing else peaked this high or fell this far. That is the obituary: not a failure but a monument, the last show big enough to die in public. One network, one night, one conversation. The conditions that drew this curve will never exist again.</p></article>
+  <article class="obit"><h3>The Death</h3><p>Sunday, October 12, 2014. 17.29 million people watched the season 5 premiere, “No Sanctuary.” No scripted series on any network, before or since, has touched that number. For one night, America still had a single campfire.</p><p>Then came the longest, steadiest bleed ever measured on television: season averages of 14.38 million, then 13.15, then 11.35, then 7.81, then under 5, then under 3, then 1.69. In November 2022, 2.27 million watched the finale. Eighty-seven percent of the peak audience was gone.</p><p>It was not one bad episode. Negan’s premiere in October 2016 drew 17.03 million, the last great night, and the show never recovered its momentum. The universe kept expanding while the mothership shrank: spinoffs multiplying as the audience divided. And the ocean tripled around it: 211 scripted series in 2009, 599 by 2022. Attention did not leave television. It fragmented, and this was the thing it fragmented away from.</p><p>Nothing else peaked this high or fell this far. That is the obituary: not a failure but a monument, the last show big enough to die in public. One network, one night, one conversation. The conditions that drew this curve will never exist again.</p></article>
 </section>
 
 <section class="showsec" id="show-1">
   <div class="secnum">II.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#0072B2"></span>
-    <h2>Game of Thrones</h2><span class="badge">Complete</span>
-  </div>
-  <div class="showmeta">HBO · 2011-2019 · 73 episodes</div>
+  <h2 class="verdict">The tombstone reads 4.0.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#0072B2"></span><span class="showname">Game of Thrones</span><span>HBO · 2011-2019 · 73 episodes</span><span class="badge">Complete</span></div>
   <div class="secstat"><span class="secstat-num" data-count="4.0" data-fmt="dec1" style="color:#0072B2">4.0</span><span class="secstat-txt">IMDb for a finale 13.61M people watched. The most-watched and least-loved episode at once.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-1" viewBox="0 0 1000 420" role="img" aria-label="Game of Thrones per-episode viewership"></svg>
@@ -315,16 +369,13 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="got-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="3" data-me="9" aria-label="Show moment 1 on the chart">1</button><div><strong>S3E9 “The Rains of Castamere”</strong> · Jun 2, 2013, 5.22M viewers, IMDb 9.9.<br>The Red Wedding. 5.22M watched it live; IMDb calls it 9.9, the best-loved episode ever.</div></li>
 <li id="got-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="8" data-me="3" aria-label="Show moment 2 on the chart">2</button><div><strong>S8E3 “The Long Night”</strong> · Apr 28, 2019, 12.02M viewers, IMDb 7.5.<br>The biggest battle ever put on television: 12.02M watched, and IMDb gave it 7.5.</div></li>
 <li id="got-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="8" data-me="6" aria-label="Show moment 3 on the chart">3</button><div><strong>S8E6 “The Iron Throne”</strong> · May 19, 2019, 13.61M viewers, IMDb 4.0.<br>13.61M watched. IMDb 4.0. The most-watched and least-loved episode, simultaneously.</div></li></ol>
-  <article class="obit"><h3>The Coronation</h3><p>May 19, 2019. 13.61 million people watched the series finale, the largest audience in the show’s history. Then they went to IMDb and gave it a 4.0: the lowest rating of the entire 73-episode run. The most-watched and least-loved episode, in the same hour. No show in television history has done that.</p><p>Eight seasons, every single one bigger than the last: 2.52 million on average in season 1, 11.99 in season 8. No spikes, no collapses, just eight years of compounding attention. The last monoculture hit, still climbing while the monoculture ended around it.</p><aside class="pullquote"><p>“The tombstone reads 4.0.”</p><div class="attr">From “The Coronation,” below</div></aside><p>The anger was the compliment. 13.61 million people do not hate-watch something they never loved. “The Long Night” drew 12.02 million while affection collapsed underneath it. The audience kept growing as the love died. That is the entire story of season 8 in a single sentence.</p><p>It died at the top, on its own terms: the healthiest death of the three. Eight years ruling television, out at the height of its power. The coronation that felt like a funeral. The tombstone reads 4.0.</p></article>
+  <article class="obit"><h3>The Coronation</h3><p>May 19, 2019. 13.61 million people watched the series finale, the largest audience in the show’s history. Then they went to IMDb and gave it a 4.0: the lowest rating of the entire 73-episode run. The most-watched and least-loved episode, in the same hour. No show in television history has done that.</p><p>Eight seasons, every single one bigger than the last: 2.52 million on average in season 1, 11.99 in season 8. No spikes, no collapses, just eight years of compounding attention. The last monoculture hit, still climbing while the monoculture ended around it.</p><p>The anger was the compliment. 13.61 million people do not hate-watch something they never loved. “The Long Night” drew 12.02 million while affection collapsed underneath it. The audience kept growing as the love died. That is the entire story of season 8 in a single sentence.</p><p>It died at the top, on its own terms: the healthiest death of the three. Eight years ruling television, out at the height of its power. The coronation that felt like a funeral. The tombstone reads 4.0.</p></article>
 </section>
 
 <section class="showsec" id="show-2">
   <div class="secnum">III.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#B37400"></span>
-    <h2>Breaking Bad</h2><span class="badge">Complete</span>
-  </div>
-  <div class="showmeta">AMC · 2008-2013 · 62 episodes</div>
+  <h2 class="verdict">The data says the ascent may never happen again.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#B37400"></span><span class="showname">Breaking Bad</span><span>AMC · 2008-2013 · 62 episodes</span><span class="badge">Complete</span></div>
   <div class="secstat"><span class="secstat-num" data-count="7.3" data-fmt="mult1" style="color:#B37400">7.3×</span><span class="secstat-txt">Premiere to finale: 1.41M → 10.28M. The only ascent.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-2" viewBox="0 0 1000 420" role="img" aria-label="Breaking Bad per-episode viewership"></svg>
@@ -335,16 +386,13 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="bb-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="1" data-me="5" aria-label="Show moment 1 on the chart">1</button><div><strong>S1E5 “Gray Matter”</strong> · Feb 24, 2008, 0.97M viewers, IMDb 8.2.<br>The series low: 0.97M. This number was derived by subtraction, not measured (see Data and Methods).</div></li>
 <li id="bb-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="5" data-me="14" aria-label="Show moment 2 on the chart">2</button><div><strong>S5E14 “Ozymandias”</strong> · Sep 15, 2013, 6.37M viewers, IMDb 9.5.<br>Once a perfect 10 on IMDb; a review-bombing campaign has dragged it to 9.5.</div></li>
 <li id="bb-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="5" data-me="16" aria-label="Show moment 3 on the chart">3</button><div><strong>S5E16 “Felina”</strong> · Sep 29, 2013, 10.28M viewers, IMDb 9.8.<br>The ascent, complete: 10.28M, 7.3× the premiere. Nobody else climbed like this.</div></li></ol>
-  <article class="obit"><h3>The Ascent</h3><p>January 20, 2008. 1.41 million people watched the premiere, fewer than watched an average episode of The Walking Dead at its absolute lowest. The series low, “Gray Matter,” drew 0.97 million: a number so small it had to be derived by subtraction, because nobody bothered measuring it precisely.</p><p>Then the impossible. Season averages of 1.23, 1.31, 1.52, 1.87 million. Then, in the final sixteen episodes, the culture arrived all at once. “Felina” drew 10.28 million: 7.3 times the premiere. Everything else on this page was dying. This was being discovered.</p><aside class="pullquote"><p>“The data says the ascent may never happen again.”</p><div class="attr">From “The Ascent,” below</div></aside><p>The binge did it. Four seasons landed on Netflix between airings; viewers mainlined them in weeks, then showed up live for the ending. The only fate on this page the streaming era saved instead of buried, and the love held: “Felina” sits at 9.8, and “Ozymandias” was a perfect 10 before a review-bombing campaign dragged it to 9.5.</p><p>The quiet lesson is in the flat early years: four seasons renewed on prestige over profit, the kind of show today’s economics cancels after season 2. It took a patient network, a back catalog on a new platform, and an ending worth showing up for. Remove any one of those and the curve never bends. One fell, one was crowned, one ascended. The data says the ascent may never happen again.</p></article>
+  <article class="obit"><h3>The Ascent</h3><p>January 20, 2008. 1.41 million people watched the premiere, fewer than watched an average episode of The Walking Dead at its absolute lowest. The series low, “Gray Matter,” drew 0.97 million: a number so small it had to be derived by subtraction, because nobody bothered measuring it precisely.</p><p>Then the impossible. Season averages of 1.23, 1.31, 1.52, 1.87 million. Then, in the final sixteen episodes, the culture arrived all at once. “Felina” drew 10.28 million: 7.3 times the premiere. Everything else on this page was dying. This was being discovered.</p><p>The binge did it. Four seasons landed on Netflix between airings; viewers mainlined them in weeks, then showed up live for the ending. The only fate on this page the streaming era saved instead of buried, and the love held: “Felina” sits at 9.8, and “Ozymandias” was a perfect 10 before a review-bombing campaign dragged it to 9.5.</p><p>The quiet lesson is in the flat early years: four seasons renewed on prestige over profit, the kind of show today’s economics cancels after season 2. It took a patient network, a back catalog on a new platform, and an ending worth showing up for. Remove any one of those and the curve never bends. One fell, one was crowned, one ascended. The data says the ascent may never happen again.</p></article>
 </section>
 
 <section class="showsec" id="show-3">
   <div class="secnum">IV.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#A24D7E"></span>
-    <h2>House of the Dragon</h2><span class="badge ongoing">Ongoing</span>
-  </div>
-  <div class="showmeta">HBO · 2022- · 26 episodes</div>
+  <h2 class="verdict">The old charts now describe the audience the way a shadow describes a person.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#A24D7E"></span><span class="showname">House of the Dragon</span><span>HBO · 2022- · 26 episodes</span><span class="badge ongoing">Ongoing</span></div>
   <div class="secstat"><span class="secstat-num" data-count="9" data-fmt="intx" style="color:#A24D7E">9×</span><span class="secstat-txt">S1 premiere: 2.17M linear → 20M total. The streaming era, in one number.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-3" viewBox="0 0 1000 420" role="img" aria-label="House of the Dragon per-episode viewership"></svg>
@@ -355,16 +403,13 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="hotd-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="1" data-me="1" aria-label="Show moment 1 on the chart">1</button><div><strong>S1E1 “The Heirs of the Dragon”</strong> · Aug 21, 2022, 2.17M viewers, IMDb 8.7.<br>2.17M watched linearly. 20M watched in total. The gap between the two numbers is the whole story.</div></li>
 <li id="hotd-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="2" data-me="4" aria-label="Show moment 2 on the chart">2</button><div><strong>S2E4 “The Red Dragon and the Gold”</strong> · Jul 7, 2024, 1.24M viewers, IMDb 9.4.<br>IMDb 9.4, the best-loved episode of the reign so far.</div></li>
 <li id="hotd-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="3" data-me="7" aria-label="Show moment 3 on the chart">3</button><div><strong>S3E7 “The Dragon in Winter”</strong> · Aug 2, 2026, 0.79M viewers, IMDb n/a.<br>The linear floor: 0.79M. No IMDb rating could even be found for this one.</div></li></ol>
-  <article class="obit"><h3>The Heir</h3><p>August 21, 2022. 2.17 million people watched the premiere the old way: overnight, linear, Nielsen. Within days, HBO counted 20 million. Nine times the number on this page. The audience did not shrink. It moved somewhere the old ruler cannot reach.</p><p>On linear alone it reads as a collapse: under a million an episode by season 3. In reality the season 3 premiere did 21.5 million globally in its first three days across cable and Max. Judging this show by its overnights is like judging a river by its surface.</p><aside class="pullquote"><p>“The old charts now describe the audience the way a shadow describes a person.”</p><div class="attr">From “The Heir,” below</div></aside><p>And the affection is real. “The Red Dragon and the Gold” sits at 9.4 on IMDb; the season 3 premiere opened at 9.3. A fourth and final season has been ordered. It is the only fate on this page still being written.</p><p>So what does success even look like now? Not one number on a Monday morning, but a constellation: overnights, streams, thirty-day totals, global rollouts, the conversation. This show will never trace a clean curve, because there is no longer one line to draw. The Walking Dead died on television. Game of Thrones was crowned on it. Breaking Bad ascended through it. House of the Dragon is the first great show of the after, and its numbers prove the old charts now describe the audience the way a shadow describes a person.</p></article>
+  <article class="obit"><h3>The Heir</h3><p>August 21, 2022. 2.17 million people watched the premiere the old way: overnight, linear, Nielsen. Within days, HBO counted 20 million. Nine times the number on this page. The audience did not shrink. It moved somewhere the old ruler cannot reach.</p><p>On linear alone it reads as a collapse: under a million an episode by season 3. In reality the season 3 premiere did 21.5 million globally in its first three days across cable and Max. Judging this show by its overnights is like judging a river by its surface.</p><p>And the affection is real. “The Red Dragon and the Gold” sits at 9.4 on IMDb; the season 3 premiere opened at 9.3. A fourth and final season has been ordered. It is the only fate on this page still being written.</p><p>So what does success even look like now? Not one number on a Monday morning, but a constellation: overnights, streams, thirty-day totals, global rollouts, the conversation. This show will never trace a clean curve, because there is no longer one line to draw. The Walking Dead died on television. Game of Thrones was crowned on it. Breaking Bad ascended through it. House of the Dragon is the first great show of the after, and its numbers prove the old charts now describe the audience the way a shadow describes a person.</p></article>
 </section>
 
 <section class="showsec" id="show-4">
   <div class="secnum">V.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#8C564B"></span>
-    <h2>Better Call Saul</h2><span class="badge">Complete</span>
-  </div>
-  <div class="showmeta">AMC · 2015-2022 · 63 episodes</div>
+  <h2 class="verdict">Attention is not the same as love.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#8C564B"></span><span class="showname">Better Call Saul</span><span>AMC · 2015-2022 · 63 episodes</span><span class="badge">Complete</span></div>
   <div class="secstat"><span class="secstat-num" data-count="1.8" data-fmt="dec1" style="color:#8C564B">1.8</span><span class="secstat-txt">million watched “Saul Gone.” 6.88M watched the premiere. The faithful stayed.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-4" viewBox="0 0 1000 420" role="img" aria-label="Better Call Saul per-episode viewership"></svg>
@@ -375,17 +420,14 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="bcs-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="1" data-me="1" aria-label="Show moment 1 on the chart">1</button><div><strong>S1E1 “Uno”</strong> · Feb 8, 2015, 6.88M viewers, IMDb n/a.<br>The biggest cable premiere ever: 6.88M tuned in for “Uno.” Most of them never came back.</div></li>
 <li id="bcs-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="5" data-me="8" aria-label="Show moment 2 on the chart">2</button><div><strong>S5E8 “Bagman”</strong> · Apr 6, 2020, 1.42M viewers, IMDb n/a.<br>The desert episode: 1.42M watched, and the run's reputation kept climbing while the audience kept falling.</div></li>
 <li id="bcs-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="6" data-me="13" aria-label="Show moment 3 on the chart">3</button><div><strong>S6E13 “Saul Gone”</strong> · Aug 15, 2022, 1.8M viewers, IMDb n/a.<br>1.80M watched “Saul Gone.” The show ended on purpose, at the bottom of the chart and the top of every critic's list.</div></li></ol>
-  <article class="obit"><h3>The Fade</h3><p>February 8, 2015. 6.88 million people watched “Uno,” the biggest cable premiere ever: the audience that loved Walter White, arriving all at once. By episode 3 the number was under 3.5 million. The audience made its decision in three weeks. This was not the show they tuned in for.</p><p>What followed is the strangest curve on this page: seven years of the best-reviewed show on television, playing to a fraction of its parent's audience. Never above 2.6 million after season 1. Breaking Bad's chart was an ascent. This is a flatline — the anti-Breaking Bad, climbing in reputation while the numbers refused to move.</p><aside class="pullquote"><p>“Attention is not the same as love.”</p><div class="attr">From “The Fade,” below</div></aside><p>And the flatline held. The finale, “Saul Gone,” drew 1.80 million: a quarter of the premiere, and a number the show had been sitting on for years. It ended because the story was done, not because the audience left. The audience had settled at 1.2 to 1.8 million and never wavered, through six seasons and two Emmy snubs' worth of being called the best show on TV.</p><p>Attention is not the same as love. 1.80 million people watched the ending of one of the greatest shows ever made, and every one of them chose to be there. Nobody left. Everybody stayed. The tombstone reads 6.88 million arrived, and the faithful remained.</p></article>
+  <article class="obit"><h3>The Fade</h3><p>February 8, 2015. 6.88 million people watched “Uno,” the biggest cable premiere ever: the audience that loved Walter White, arriving all at once. By episode 3 the number was under 3.5 million. The audience made its decision in three weeks. This was not the show they tuned in for.</p><p>What followed is the strangest curve on this page: seven years of the best-reviewed show on television, playing to a fraction of its parent's audience. Never above 2.6 million after season 1. Breaking Bad's chart was an ascent. This is a flatline — the anti-Breaking Bad, climbing in reputation while the numbers refused to move.</p><p>And the flatline held. The finale, “Saul Gone,” drew 1.80 million: a quarter of the premiere, and a number the show had been sitting on for years. It ended because the story was done, not because the audience left. The audience had settled at 1.2 to 1.8 million and never wavered, through six seasons and two Emmy snubs' worth of being called the best show on TV.</p><p>Attention is not the same as love. 1.80 million people watched the ending of one of the greatest shows ever made, and every one of them chose to be there. Nobody left. Everybody stayed. The tombstone reads 6.88 million arrived, and the faithful remained.</p></article>
 </section>
 
 <section class="showsec" id="show-5">
   <div class="secnum">VI.</div>
-  <div class="showhead">
-    <span class="cdot" style="background:#9A7200"></span>
-    <h2>Lost</h2><span class="badge">Complete</span>
-  </div>
-  <div class="showmeta">ABC · 2004-2010 · 121 episodes</div>
-  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1" style="color:#9A7200">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
+  <h2 class="verdict">It did not die of quality. It died of the calendar.</h2>
+  <div class="showmeta"><span class="cdot" style="background:#007A5E"></span><span class="showname">Lost</span><span>ABC · 2004-2010 · 121 episodes</span><span class="badge">Complete</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1" style="color:#007A5E">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-5" viewBox="0 0 1000 420" role="img" aria-label="Lost per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-5" min="0" max="120" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-5"></div></div>
@@ -395,7 +437,7 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
   <ol class="moments"><li id="lost-moment-1" tabindex="-1"><button type="button" class="mnum" data-ms="1" data-me="1" aria-label="Show moment 1 on the chart">1</button><div><strong>S1E1 “Pilot”</strong> · Sep 22, 2004, 18.65M viewers, IMDb n/a.<br>18.65M watched the pilot: the most expensive pilot ever made, and the last great network launch.</div></li>
 <li id="lost-moment-2" tabindex="-1"><button type="button" class="mnum" data-ms="2" data-me="1" aria-label="Show moment 2 on the chart">2</button><div><strong>S2E1 “Man of Science, Man of Faith”</strong> · Sep 21, 2005, 23.47M viewers, IMDb n/a.<br>23.47M for the season 2 premiere: the biggest number on this page after The Walking Dead's peak.</div></li>
 <li id="lost-moment-3" tabindex="-1"><button type="button" class="mnum" data-ms="6" data-me="18" aria-label="Show moment 3 on the chart">3</button><div><strong>S6E18 “The End (Part 2)”</strong> · May 23, 2010, 13.57M viewers, IMDb n/a.<br>13.57M watched “The End.” Half of them have been arguing about it ever since.</div></li></ol>
-  <article class="obit"><h3>The Mystery</h3><p>September 22, 2004. 18.65 million people watched a plane crash on a beach, the most expensive pilot ever made. A year later the season 2 premiere drew 23.47 million — the biggest number on this page after The Walking Dead's peak. Network television's last mystery, and the last time America agreed to be confused together.</p><p>The curve tells the rest: season averages of 15.69 million, then 18.91, then the slow network slide — 13.74, 12.73, 9.89 — until the sixth-season premiere could still pull 12.09 and the finale, “The End,” pulled 13.57. Then the audience went home and argued about it for a decade. Half of them are still arguing.</p><aside class="pullquote"><p>“It did not die of quality. It died of the calendar.”</p><div class="attr">From “The Mystery,” below</div></aside><p>What Lost proved is that the monoculture's last stand was a question mark. This was a show you had to watch live, because Monday's conversation required it. Then came the DVR, then the stream, and the conditions that drew this curve vanished. Nobody schedules confusion anymore. You press play, or you don't.</p><p>It did not die of quality. It died of the calendar: six seasons, 121 episodes, and an audience that moved on to watching everything later. The recap specials aren't even counted here — that's how many hours this show demanded. The tombstone reads 13.57 million, and half of them were angry. The other half never stopped believing.</p></article>
+  <article class="obit"><h3>The Mystery</h3><p>September 22, 2004. 18.65 million people watched a plane crash on a beach, the most expensive pilot ever made. A year later the season 2 premiere drew 23.47 million — the biggest number on this page after The Walking Dead's peak. Network television's last mystery, and the last time America agreed to be confused together.</p><p>The curve tells the rest: season averages of 15.69 million, then 18.91, then the slow network slide — 13.74, 12.73, 9.89 — until the sixth-season premiere could still pull 12.09 and the finale, “The End,” pulled 13.57. Then the audience went home and argued about it for a decade. Half of them are still arguing.</p><p>What Lost proved is that the monoculture's last stand was a question mark. This was a show you had to watch live, because Monday's conversation required it. Then came the DVR, then the stream, and the conditions that drew this curve vanished. Nobody schedules confusion anymore. You press play, or you don't.</p><p>It did not die of quality. It died of the calendar: six seasons, 121 episodes, and an audience that moved on to watching everything later. The recap specials aren't even counted here — that's how many hours this show demanded. The tombstone reads 13.57 million, and half of them were angry. The other half never stopped believing.</p></article>
 </section>
 
 
@@ -405,10 +447,7 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
     <h2>Three Eras of the Sitcom</h2><span class="badge">Complete</span>
   </div>
   <p class="sitcom-lede">You asked for it in the comments. Seinfeld, Friends and The Office: three eras of the sitcom, every episode measured the same old way.</p>
-  <div class="setswitch" role="group" aria-label="Choose which set to compare">
-    <button class="setbtn on" data-set="sitcoms" aria-pressed="true">Sitcoms</button>
-    <button class="setbtn" data-set="dramas" aria-pressed="false">Dramas</button>
-  </div>
+  <div id="cmp-sitcoms">
   <div class="vizhead">
     <div class="vtitle">Three eras, one ruler. <em>every episode, measured the old way</em></div>
     <div class="viztools">
@@ -420,14 +459,14 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
         <button class="xbtn on" data-y="lin" aria-pressed="true">Linear</button>
         <button class="xbtn" data-y="log" aria-pressed="false">Log</button>
       </div>
-      <button class="dotsbtn" id="dotsbtn2" aria-pressed="false">Dots only</button>
-      <span class="yearout" id="yearout2"></span>
-      <button class="playbtn" id="playbtn2">&#9654; Play it</button>
+      <button class="dotsbtn" aria-pressed="false">Dots only</button>
+      <span class="yearout"></span>
+      <button class="playbtn">&#9654; Play it</button>
     </div>
   </div>
-  <svg id="versus2" viewBox="0 0 1000 520" role="img" aria-label="Versus chart: per-episode viewership"></svg>
-  <div class="vlegend" id="vlegend2"></div>
-  <div class="cap" id="sitcap"></div>
+  <svg class="compare" viewBox="0 0 1000 520" role="img" aria-label="Versus chart: per-episode viewership"></svg>
+  <div class="cap"></div>
+  </div>
   <div class="obits3">
     <article class="obit" aria-label="Seinfeld obituary">
   <h4><span class="cdot" style="background:#009E73"></span>Seinfeld</h4>
@@ -513,7 +552,7 @@ const VX=t=>VL+(t-VT0)/(VT1-VT0)*(VW-VL-VR), VY=v=>VT+(1-v/18)*(VH-VT-VB);
 const VSHOWS=[['The Walking Dead','#D55E00','twd'],['Game of Thrones','#0072B2','got'],['Breaking Bad','#B37400','bb']];
 const VPAT={'twd':'','got':'12,6','bb':'3,3'};
 const VSHAPE={'twd':'circle','got':'square','bb':'triangle'};
-const PCOL={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#9A7200'};
+const PCOL={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#007A5E'};
 const byName={}; DATA.shows.forEach(s=>byName[s.show]=s);
 const PSHAPE={'The Walking Dead':'circle','Game of Thrones':'square','Breaking Bad':'triangle','House of the Dragon':'diamond','Better Call Saul':'cross','Lost':'star'};
 const VG={}; let gUnder, gNotes, clipRect, playCursor;
@@ -694,6 +733,10 @@ document.querySelectorAll('.quizbtn').forEach(b=>b.addEventListener('click',()=>
     b.classList.add('right');
     document.querySelectorAll('.quizbtn').forEach(x=>{x.disabled=true;});
     document.getElementById('quizanswer').hidden=false;
+    if(!document.getElementById('quizchart').dataset.done){
+      document.getElementById('quizchart').dataset.done='1';
+      quizChart();
+    }
     document.getElementById('quizhint').textContent='';
   }else{
     b.classList.add('wrong');
@@ -780,6 +823,34 @@ DATA.shows.forEach((s)=>{
     mg.addEventListener('click',ev=>{ ev.preventDefault(); goList(); });
     mg.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); goList(); } });
   });
+  /* v4: top-2 moment labels live on the data, collision-checked vs callouts (moments win ties) */
+  (function momentLabels(){
+    const boxes=[];
+    (MOMIDX[s.show]||[]).forEach(me2=>{ const ms=me2[0], me=me2[1];
+      const i=s.episodes.findIndex(ep=>ep.s===ms&&ep.e===me); if(i<0) return;
+      boxes.push({x:X(i),y:Y(s.episodes[i].viewers)-10,hw:16,hh:24}); });
+    (CALLOUTS[s.show]||[]).forEach(c=>boxes.push({x:c.x,y:c.y,hw:46,hh:13}));
+    (MOMIDX[s.show]||[]).slice(0,2).forEach(me2=>{
+      const ms=me2[0], me=me2[1];
+      const i=s.episodes.findIndex(ep=>ep.s===ms&&ep.e===me); if(i<0) return;
+      const ep=s.episodes[i], x=X(i), y=Y(ep.viewers), mg=momMap[ms+'-'+me];
+      if(!mg) return;
+      let label='S'+ms+'E'+me+' \u201c'+ep.title+'\u201d';
+      if(label.length>34) label=label.slice(0,33)+'\u2026';
+      const hw=label.length*3.4+8, hh=9, pad=4;
+      const cands=[{x:x,y:y-36},{x:x,y:y+38},{x:x+hw+18,y:y},{x:x-hw-18,y:y}];
+      let plc=null;
+      for(const c of cands){
+        const cx=Math.min(Math.max(c.x,hw+pad),W-hw-pad), cy=Math.min(Math.max(c.y,hh+pad),H-hh-pad);
+        if(boxes.every(b=>Math.abs(cx-b.x)>=hw+b.hw+pad||Math.abs(cy-b.y)>=hh+b.hh+pad)){ plc={x:cx,y:cy}; break; }
+      }
+      if(!plc) return;
+      boxes.push({x:plc.x,y:plc.y,hw:hw,hh:hh});
+      el('line',{x1:x,y1:y,x2:plc.x,y2:plc.y+(plc.y<y?hh:-hh),stroke:'#b7a98c','stroke-width':1},mg);
+      const t=el('text',{x:plc.x,y:plc.y+4,'text-anchor':'middle',fill:'#5c564d','font-size':12},mg);
+      t.textContent=label;
+    });
+  })();
   /* list item -> marker */
   if(sec) sec.querySelectorAll('.moments .mnum').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -863,18 +934,11 @@ const pIO=new IntersectionObserver(es=>{
 },{threshold:.5});
 pAuto.forEach(a=>pIO.observe(a.svg));
 
-/* ================= SITCOM VERSUS CHART (v2) ================= */
-const S2COLOR={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#9A7200','Seinfeld':'#009E73','Friends':'#56B4E9','The Office':'#000000'};
-const S2DASH={'The Walking Dead':'','Game of Thrones':'12,6','Breaking Bad':'3,3','House of the Dragon':'16,5,3,5','Better Call Saul':'2,2','Lost':'10,4','Seinfeld':'6,6','Friends':'2,5','The Office':'20,6,3,6,3,6'};
+/* ================= COMPARISON CHARTS (v4): direct labels, tap-to-focus ================= */
+const S2COLOR={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#007A5E','Seinfeld':'#009E73','Friends':'#56B4E9','The Office':'#000000'};
+const S2DASH={'The Walking Dead':'','Game of Thrones':'12,6','Breaking Bad':'3,3','House of the Dragon':'16,5,3,5','Better Call Saul':'1.5,4','Lost':'10,4,2,4,2,4','Seinfeld':'6,6','Friends':'2,5','The Office':'20,6,3,6,3,6'};
 const S2SHAPE={'The Walking Dead':'circle','Game of Thrones':'square','Breaking Bad':'triangle','House of the Dragon':'diamond','Better Call Saul':'cross','Lost':'star','Seinfeld':'circle','Friends':'square','The Office':'triangle'};
-const S2SETS={
-  sitcoms:{shows:['Seinfeld','Friends','The Office'],
-    x0:new Date('1989-01-01').getTime(),x1:new Date('2014-06-01').getTime(),
-    ymax:80,ystep:10,y0:1989,y1:2013.5,
-    notes:[['Seinfeld','1998-05-14','Finale: 76.26M',14,-8,'start'],
-           ['Friends','1996-01-28','Post-Super Bowl peak: 52.9M',14,-8,'start'],
-           ['The Office','2009-02-01','Stress Relief: 22.91M',14,16,'start']],
-    cap:'Three eras of the network sitcom, 1989 to 2013, on one ruler.'},
+const S2CFG={
   dramas:{shows:['The Walking Dead','Game of Thrones','Breaking Bad','House of the Dragon','Better Call Saul','Lost'],
     x0:new Date('2004-01-01').getTime(),x1:VT1,ymax:25,ystep:5,y0:2004,y1:2022.5,
     notes:[['Lost','2005-09-21','Peak: 23.47M',14,-8,'start'],
@@ -882,168 +946,229 @@ const S2SETS={
            ['Breaking Bad','2013-09-29','Felina: 10.28M',-8,30,'middle'],
            ['Game of Thrones','2019-05-19','Finale: 13.61M',14,-8,'start'],
            ['Better Call Saul','2015-02-08','Debut: 6.88M',14,-8,'start']],
-    cap:'Six dramas, 2004 to 2026, on one ruler.'}
+    cap:'Six dramas, 2004 to 2026, on one ruler.'},
+  sitcoms:{shows:['Seinfeld','Friends','The Office'],
+    x0:new Date('1989-01-01').getTime(),x1:new Date('2014-06-01').getTime(),
+    ymax:80,ystep:10,y0:1989,y1:2013.5,
+    notes:[['Seinfeld','1998-05-14','Finale: 76.26M',14,-8,'start'],
+           ['Friends','1996-01-28','Post-Super Bowl peak: 52.9M',14,-8,'start'],
+           ['The Office','2009-02-01','Stress Relief: 22.91M',14,16,'start']],
+    cap:'Three eras of the network sitcom, 1989 to 2013, on one ruler.'}
 };
-const s2={set:'sitcoms',xMode:'air',yLog:false,dotsOnly:false,hidden:new Set(),sawSection:false};
-const s2svg=document.getElementById('versus2');
-const S2W=1000,S2H=520,S2L=56,S2R=20,S2T=44,S2B=44;
-let s2Clip=null,s2Cursor=null,s2PlayRAF=null;
-const playBtn2=document.getElementById('playbtn2'), yearOut2=document.getElementById('yearout2');
+const FOCUS_DIM='#d8cfbd'; /* non-focused series fade to this, never to invisible */
 
 function gcEvent(path){ try{ if(window.goatcounter&&window.goatcounter.count) window.goatcounter.count({path:path,event:true}); }catch(e){} }
 
-function s2CancelPlay(){
-  if(!s2PlayRAF) return;
-  cancelAnimationFrame(s2PlayRAF); s2PlayRAF=null;
-  playBtn2.innerHTML='&#9654; Play it';
-  if(s2Cursor) s2Cursor.setAttribute('visibility','hidden');
-  if(s2Clip) s2Clip.setAttribute('width',S2W-S2L-S2R);
-  yearOut2.textContent='';
-}
+function makeCompare(rootId, cfgKey, viewEvent){
+  const root=document.getElementById(rootId);
+  const svg=root.querySelector('svg.compare');
+  const capEl=root.querySelector('.cap');
+  const playBtn=root.querySelector('.playbtn');
+  const yearOut=root.querySelector('.yearout');
+  const dotsBtn=root.querySelector('.dotsbtn');
+  const cfg=S2CFG[cfgKey];
+  const st={xMode:'air',yLog:false,dotsOnly:false,focus:null};
+  const W=1000,H=520,L=56,R=176,T=44,B=44; /* R reserves the label column */
+  let clip=null,cursor=null,playRAF=null,saw=false;
 
-function s2Render(animate){
-  s2CancelPlay();
-  const cfg=S2SETS[s2.set];
-  while(s2svg.firstChild) s2svg.removeChild(s2svg.firstChild);
-  const defs=el('defs',{},s2svg);
-  const cp=el('clipPath',{id:'timeclip2'},defs);
-  s2Clip=el('rect',{x:S2L,y:0,width:S2W-S2L-S2R,height:S2H},cp);
-  const epsOf={};
-  const names=cfg.shows.filter(n=>!s2.hidden.has(n));
-  const yTop=cfg.ymax;
-  const Y=v=> s2.yLog
-    ? S2T+(1-Math.log10(Math.max(v,0.01)+1)/Math.log10(yTop+1))*(S2H-S2T-S2B)
-    : S2T+(1-v/yTop)*(S2H-S2T-S2B);
-  let X; const xTicks=[];
-  if(s2.xMode==='air'){
-    X=ep=>S2L+(new Date(ep.air+'T12:00:00').getTime()-cfg.x0)/(cfg.x1-cfg.x0)*(S2W-S2L-S2R);
-    const yA=cfg.y0, yB=Math.ceil(cfg.y1), st=(yB-yA>20?4:2);
-    for(let y=yA;y<=yB;y+=st) xTicks.push([S2L+(new Date(y+'-01-01').getTime()-cfg.x0)/(cfg.x1-cfg.x0)*(S2W-S2L-S2R),String(y)]);
-  }else{
-    const maxN=Math.max.apply(null,cfg.shows.map(n=>byName[n].episodes.length));
-    X=ep=>S2L+(ep.__i)/(maxN-1)*(S2W-S2L-S2R);
-    for(let k=1;k<=maxN;k+=50) xTicks.push([S2L+(k-1)/(maxN-1)*(S2W-S2L-S2R),'Ep '+k]);
+  function cancelPlay(){
+    if(!playRAF) return;
+    cancelAnimationFrame(playRAF); playRAF=null;
+    playBtn.innerHTML='&#9654; Play it';
+    if(cursor) cursor.setAttribute('visibility','hidden');
+    if(clip) clip.setAttribute('width',W-L-R);
+    yearOut.textContent='';
   }
-  const gG=el('g',{},s2svg);
-  const yTicks=s2.yLog ? [1,2,5,10,20,50].filter(v=>v<=yTop) : (function(){ var a=[]; for(var v=0;v<=yTop;v+=cfg.ystep) a.push(v); return a; })();
-  yTicks.forEach(v=>{
-    el('line',{x1:S2L,x2:S2W-S2R,y1:Y(v),y2:Y(v),stroke:'#e6d9bd','stroke-width':1},gG);
-    const t=el('text',{x:S2L-10,y:Y(v)+4,fill:'#8d867a','font-size':12,'text-anchor':'end'},gG); t.textContent=v+'M';
-  });
-  xTicks.forEach(([x,lab])=>{ const t=el('text',{x:x,y:S2H-16,fill:'#8d867a','font-size':12,'text-anchor':'middle'},s2svg); t.textContent=lab; });
-  const gL=el('g',{'clip-path':'url(#timeclip2)'},s2svg);
-  names.forEach(nm=>{
-    const s=byName[nm], col=S2COLOR[nm], dash=S2DASH[nm];
-    const eps=s.episodes.map((ep,i)=>Object.assign({__i:i},ep)).filter(ep=>ep.viewers!=null);
-    epsOf[nm]=eps;
-    const g=el('g',{},gL);
-    const pts=eps.map(ep=>[X(ep),Y(ep.viewers)]);
-    if(!s2.dotsOnly){
-      const pl=el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:col,'stroke-width':2.4,opacity:.95,'class':'s2-line'},g);
-      if(dash) pl.setAttribute('stroke-dasharray',dash);
-      if(animate&&!RM){
-        const len=pl.getTotalLength();
-        pl.style.transition='none'; pl.style.strokeDasharray=String(len); pl.style.strokeDashoffset=String(len);
-        void pl.getBoundingClientRect();
-        pl.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; pl.style.strokeDashoffset='0';
-        setTimeout(()=>{ if(dash) pl.style.strokeDasharray=dash; else pl.style.strokeDasharray='none'; pl.style.transition=''; },1250);
-      }
+
+  function render(animate){
+    cancelPlay();
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const defs=el('defs',{},svg);
+    const cp=el('clipPath',{id:'tc-'+rootId},defs);
+    clip=el('rect',{x:L,y:0,width:W-L-R,height:H},cp);
+    const epsOf={};
+    const names=cfg.shows;
+    const yTop=cfg.ymax;
+    const Y=v=> st.yLog
+      ? T+(1-Math.log10(Math.max(v,0.01)+1)/Math.log10(yTop+1))*(H-T-B)
+      : T+(1-v/yTop)*(H-T-B);
+    let X; const xTicks=[];
+    if(st.xMode==='air'){
+      X=ep=>L+(new Date(ep.air+'T12:00:00').getTime()-cfg.x0)/(cfg.x1-cfg.x0)*(W-L-R);
+      const yA=cfg.y0, yB=Math.ceil(cfg.y1), sx=(yB-yA>20?4:2);
+      for(let y=yA;y<=yB;y+=sx) xTicks.push([L+(new Date(y+'-01-01').getTime()-cfg.x0)/(cfg.x1-cfg.x0)*(W-L-R),String(y)]);
+    }else{
+      const maxN=Math.max.apply(null,cfg.shows.map(n=>byName[n].episodes.length));
+      X=ep=>L+(ep.__i)/(maxN-1)*(W-L-R);
+      for(let k=1;k<=maxN;k+=50) xTicks.push([L+(k-1)/(maxN-1)*(W-L-R),'Ep '+k]);
     }
-    pts.forEach((p,i)=>{ const ep=eps[i];
-      const c=dotShape(g,S2SHAPE[nm],p[0],p[1],col,2.6);
-      const h=()=>cardHTML(ep);
-      c.addEventListener('mouseenter',ev=>showTip(h(),ev.clientX,ev.clientY));
-      c.addEventListener('mousemove',ev=>showTip(h(),ev.clientX,ev.clientY));
-      c.addEventListener('mouseleave',hideTip);
-      c.addEventListener('click',ev=>showTip(h(),ev.clientX,ev.clientY));
+    const gG=el('g',{},svg);
+    const yTicks=st.yLog ? [1,2,5,10,20,50].filter(v=>v<=yTop) : (function(){ var a=[]; for(var v=0;v<=yTop;v+=cfg.ystep) a.push(v); return a; })();
+    yTicks.forEach(v=>{
+      el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:'#e6d9bd','stroke-width':1},gG);
+      const t=el('text',{x:L-10,y:Y(v)+4,fill:'#8d867a','font-size':12,'text-anchor':'end'},gG); t.textContent=v+'M';
     });
+    xTicks.forEach(pair=>{ const t=el('text',{x:pair[0],y:H-16,fill:'#8d867a','font-size':12,'text-anchor':'middle'},svg); t.textContent=pair[1]; });
+    const gL=el('g',{'clip-path':'url(#tc-'+rootId+')'},svg);
+    const labelItems=[];
+    names.forEach(nm=>{
+      const s=byName[nm];
+      const dimmed=st.focus&&st.focus!==nm;
+      const col=dimmed?FOCUS_DIM:S2COLOR[nm], dash=S2DASH[nm];
+      const eps=s.episodes.map((ep,i)=>Object.assign({__i:i},ep)).filter(ep=>ep.viewers!=null);
+      epsOf[nm]=eps;
+      const g=el('g',{},gL);
+      const pts=eps.map(ep=>[X(ep),Y(ep.viewers)]);
+      if(!st.dotsOnly){
+        const pl=el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:col,'stroke-width':2.4,opacity:.95,'class':'s2-line'},g);
+        if(dash&&!dimmed) pl.setAttribute('stroke-dasharray',dash);
+        if(animate&&!RM&&!dimmed){
+          const len=pl.getTotalLength();
+          pl.style.transition='none'; pl.style.strokeDasharray=String(len); pl.style.strokeDashoffset=String(len);
+          void pl.getBoundingClientRect();
+          pl.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; pl.style.strokeDashoffset='0';
+          setTimeout(()=>{ if(dash) pl.style.strokeDasharray=dash; else pl.style.strokeDasharray='none'; pl.style.transition=''; },1250);
+        }
+      }
+      pts.forEach((p,i)=>{ const ep=eps[i];
+        const c=dotShape(g,S2SHAPE[nm],p[0],p[1],col,2.6);
+        const h=()=>cardHTML(ep);
+        c.addEventListener('mouseenter',ev=>showTip(h(),ev.clientX,ev.clientY));
+        c.addEventListener('mousemove',ev=>showTip(h(),ev.clientX,ev.clientY));
+        c.addEventListener('mouseleave',hideTip);
+        c.addEventListener('click',ev=>showTip(h(),ev.clientX,ev.clientY));
+      });
+      const last=eps[eps.length-1];
+      labelItems.push({x:X(last),y:Y(last.viewers),name:nm,color:S2COLOR[nm],dash:dash,dimmed:dimmed});
+    });
+    /* peak notes (focus mode: only the focused show's note) */
+    const gN=el('g',{},svg);
+    cfg.notes.forEach(nt=>{
+      const nm=nt[0], air=nt[1], label=nt[2], dx=nt[3], dy=nt[4], anchor=nt[5];
+      if(st.focus&&st.focus!==nm) return;
+      const eps=epsOf[nm]; if(!eps) return;
+      const cands=eps.filter(e=>e.air===air); if(!cands.length) return;
+      const ep=cands.reduce((a,b)=>(b.viewers>a.viewers?b:a));
+      const x=X(ep), y=Y(ep.viewers), col=S2COLOR[nm];
+      const nc=el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gN);
+      const nh=()=>cardHTML(ep);
+      nc.addEventListener('mouseenter',ev=>showTip(nh(),ev.clientX,ev.clientY));
+      nc.addEventListener('mousemove',ev=>showTip(nh(),ev.clientX,ev.clientY));
+      nc.addEventListener('mouseleave',hideTip);
+      nc.addEventListener('click',ev=>showTip(nh(),ev.clientX,ev.clientY));
+      el('line',{x1:x,y1:y,x2:x+dx,y2:y+dy,stroke:col,'stroke-width':1,opacity:.75},gN);
+      const t=el('text',{x:x+dx+(anchor==='middle'?0:7),y:y+dy+(dy<0?-7:17),fill:col,'font-size':13.5,'font-weight':700,'text-anchor':anchor},gN);
+      t.textContent=label;
+    });
+    cursor=el('line',{x1:-10,x2:-10,y1:T,y2:H-B,stroke:'#33302E','stroke-width':1.5,opacity:.85,visibility:'hidden'},svg);
+    renderLabels(labelItems);
+    capEl.innerHTML='<span class="caphead">'+esc(cfg.cap)+'</span>'+
+      (st.xMode==='ep'
+        ? 'Horizontal axis: episode number within each show\u2019s run, so episode 50 meets episode 50. Dots: episodes. Hover or tap a dot. Tap a label to isolate a show.'
+        : 'Nielsen linear first-airing figures, millions of US viewers. Dots: episodes. Hover or tap a dot. Tap a label to isolate a show.')+
+      (st.yLog ? ' Y-axis is logarithmic.' : '');
+  }
+
+  /* v4: direct right-edge labels with greedy 2D de-collision and hairline leaders.
+     Every label carries a live dash-pattern swatch, so no show is identified by color alone. */
+  function renderLabels(items){
+    const g=el('g',{'class':'dlabels'},svg);
+    const mobile=svg.clientWidth<=480;
+    const GAP=17, minY=T+10, maxY=H-B-10;
+    const arr=items.slice().sort((a,b)=>a.y-b.y);
+    arr.forEach((it,i)=>{ it.ly=i?Math.max(it.y,arr[i-1].ly+GAP):it.y; it.lx=it.x+12; });
+    const over=arr.length?arr[arr.length-1].ly-maxY:0;
+    if(over>0) arr.forEach(it=>{ it.ly-=over; });
+    arr.forEach((it,i)=>{ if(i&&it.ly<arr[i-1].ly+GAP) it.ly=arr[i-1].ly+GAP; });
+    arr.forEach(it=>{
+      const lg=el('g',{'class':'dlabel',tabindex:'0',role:'button',
+        'aria-pressed':String(st.focus===it.name),
+        'aria-label':(st.focus===it.name?'Show all six shows':'Isolate '+it.name)+' on the chart'},g);
+      if(it.dimmed) lg.setAttribute('opacity','.42');
+      el('line',{x1:it.x+3,y1:it.y,x2:it.lx-3,y2:it.ly,stroke:'#c9bda3','stroke-width':1},lg);
+      let tx;
+      if(mobile){
+        dotShape(lg,'circle',it.lx+4,it.ly-4,it.color,3.5);
+        const ln=el('line',{x1:it.lx+11,y1:it.ly-4,x2:it.lx+27,y2:it.ly-4,stroke:it.color,'stroke-width':2.5},lg);
+        if(it.dash) ln.setAttribute('stroke-dasharray',it.dash);
+        tx=el('text',{x:it.lx+33,y:it.ly+4,'font-size':12,fill:'#33302E'},lg);
+      }else{
+        const ln=el('line',{x1:it.lx,y1:it.ly-4.5,x2:it.lx+30,y2:it.ly-4.5,stroke:it.color,'stroke-width':3},lg);
+        if(it.dash) ln.setAttribute('stroke-dasharray',it.dash);
+        tx=el('text',{x:it.lx+36,y:it.ly+4.5,'font-size':13.5,fill:'#33302E'},lg);
+        if(st.focus===it.name) tx.setAttribute('font-weight','700');
+      }
+      tx.textContent=it.name;
+      const toggle=()=>{ st.focus=(st.focus===it.name)?null:it.name; gcEvent('focus-'+(st.focus||'all')); render(false); };
+      lg.addEventListener('click',toggle);
+      lg.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); toggle(); } });
+    });
+  }
+
+  playBtn.addEventListener('click',()=>{
+    if(playRAF){ cancelPlay(); return; }
+    const plotW=W-L-R, t0=performance.now(), DUR=9000;
+    playBtn.innerHTML='&#9632; Stop'; cursor.setAttribute('visibility','visible');
+    function fr(now){
+      const p=Math.min(1,(now-t0)/DUR), e=1-Math.pow(1-p,3), w=e*plotW;
+      clip.setAttribute('width',w);
+      const cx=L+w; cursor.setAttribute('x1',cx); cursor.setAttribute('x2',cx);
+      yearOut.textContent=(st.xMode==='air')?String(Math.floor(cfg.y0+p*(cfg.y1-cfg.y0))):'';
+      if(p<1){ playRAF=requestAnimationFrame(fr); }
+      else{ playRAF=null; playBtn.innerHTML='&#9654; Play it';
+        cursor.setAttribute('visibility','hidden'); clip.setAttribute('width',plotW); yearOut.textContent=''; }
+    }
+    playRAF=requestAnimationFrame(fr);
   });
-  const gN=el('g',{},s2svg);
-  cfg.notes.forEach(([nm,air,label,dx,dy,anchor])=>{
-    if(s2.hidden.has(nm)) return;
-    const eps=epsOf[nm]; if(!eps) return;
-    const cands=eps.filter(e=>e.air===air); if(!cands.length) return;
-    const ep=cands.reduce((a,b)=>(b.viewers>a.viewers?b:a));
-    const x=X(ep), y=Y(ep.viewers), col=S2COLOR[nm];
-    const nc=el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gN);
-    const nh=()=>cardHTML(ep);
-    nc.addEventListener('mouseenter',ev=>showTip(nh(),ev.clientX,ev.clientY));
-    nc.addEventListener('mousemove',ev=>showTip(nh(),ev.clientX,ev.clientY));
-    nc.addEventListener('mouseleave',hideTip);
-    nc.addEventListener('click',ev=>showTip(nh(),ev.clientX,ev.clientY));
-    el('line',{x1:x,y1:y,x2:x+dx,y2:y+dy,stroke:col,'stroke-width':1,opacity:.75},gN);
-    const t=el('text',{x:x+dx+(anchor==='middle'?0:7),y:y+dy+(dy<0?-7:17),fill:col,'font-size':13.5,'font-weight':700,'text-anchor':anchor},gN);
-    t.textContent=label;
+  if(RM){ playBtn.style.display='none'; }
+
+  root.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.x===st.xMode) return;
+    st.xMode=b.dataset.x; st.focus=null;
+    root.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
+    render(false);
+  }));
+  root.querySelectorAll('.ytoggle .xbtn').forEach(b=>b.addEventListener('click',()=>{
+    const log=b.dataset.y==='log'; if(log===st.yLog) return;
+    st.yLog=log; st.focus=null;
+    root.querySelectorAll('.ytoggle .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
+    gcEvent('ylog-'+(log?'log':'lin'));
+    render(false);
+  }));
+  dotsBtn.addEventListener('click',function(){
+    st.dotsOnly=!st.dotsOnly;
+    this.setAttribute('aria-pressed',String(st.dotsOnly));
+    svg.querySelectorAll('.s2-line').forEach(l=>{ l.style.display=st.dotsOnly?'none':''; });
   });
-  s2Cursor=el('line',{x1:-10,x2:-10,y1:S2T,y2:S2H-S2B,stroke:'#33302E','stroke-width':1.5,opacity:.85,visibility:'hidden'},s2svg);
-  const leg=document.getElementById('vlegend2'); leg.innerHTML='';
-  cfg.shows.forEach(nm=>{
-    const b=document.createElement('button');
-    b.className='legbtn'; b.type='button';
-    b.setAttribute('aria-pressed',String(!s2.hidden.has(nm))); b.title='Toggle '+nm;
-    const sw=document.createElementNS(NS,'svg');
-    sw.setAttribute('width','46'); sw.setAttribute('height','10'); sw.setAttribute('aria-hidden','true');
-    dotShape(sw,S2SHAPE[nm],8,5,S2COLOR[nm],3.4);
-    const ln=document.createElementNS(NS,'line');
-    ln.setAttribute('x1','16'); ln.setAttribute('y1','5'); ln.setAttribute('x2','46'); ln.setAttribute('y2','5');
-    ln.setAttribute('stroke',S2COLOR[nm]); ln.setAttribute('stroke-width','3');
-    if(S2DASH[nm]) ln.setAttribute('stroke-dasharray',S2DASH[nm]);
-    sw.appendChild(ln); b.appendChild(sw);
-    b.appendChild(document.createTextNode(nm));
-    b.addEventListener('click',()=>{ if(s2.hidden.has(nm)) s2.hidden.delete(nm); else s2.hidden.add(nm); s2Render(false); });
-    leg.appendChild(b);
+  let rzT=null;
+  window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>render(false),250); });
+  new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting&&!saw){ saw=true; gcEvent(viewEvent); } }); },{threshold:.25}).observe(root);
+  render(true);
+}
+makeCompare('cmp-dramas','dramas','bridge-section');
+makeCompare('cmp-sitcoms','sitcoms','sitcoms-section');
+
+/* v4: quiz payoff reveals a mini-chart, not just text */
+function quizChart(){
+  const s=byName['The Walking Dead'], host=document.getElementById('quizchart');
+  const W2=680,H2=180,L2=10,R2=10,T2=16,B2=24, n=s.episodes.length, vmax=18;
+  const X2=i=>L2+i/(n-1)*(W2-L2-R2), Y2=v=>T2+(1-v/vmax)*(H2-T2-B2);
+  const svg=el('svg',{viewBox:'0 0 '+W2+' '+H2,'class':'quizchart',role:'img',
+    'aria-label':'Mini chart: The Walking Dead viewership from its 17.29 million peak to its 2.27 million finale'},null);
+  [0,6,12,18].forEach(v=>{ el('line',{x1:L2,x2:W2-R2,y1:Y2(v),y2:Y2(v),stroke:'#e6d9bd','stroke-width':1},svg);
+    const t=el('text',{x:L2-2,y:Y2(v)-4,fill:'#8d867a','font-size':10,'text-anchor':'start'},svg); t.textContent=v+'M'; });
+  const pts=s.episodes.map((ep,i)=>[X2(i),Y2(ep.viewers)]);
+  el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:'#D55E00','stroke-width':2},svg);
+  const pk=s.episodes.reduce((a,b)=>b.viewers>a.viewers?b:a);
+  const fi=s.episodes[n-1];
+  [[pk,'17.29M peak'],[fi,'2.27M finale']].forEach(pair=>{
+    const ep=pair[0], lab=pair[1], i=s.episodes.indexOf(ep), x=X2(i), y=Y2(ep.viewers);
+    el('circle',{cx:x,cy:y,r:4.5,fill:'#D55E00',stroke:'#FFF1E5','stroke-width':1.5},svg);
+    const t=el('text',{x:x-8,y:y-9,'text-anchor':'end','font-size':12,fill:'#5c564d'},svg); t.textContent=lab;
   });
-  document.getElementById('sitcap').innerHTML='<span class="caphead">'+esc(cfg.cap)+'</span>'+
-    (s2.xMode==='ep'
-      ? 'Horizontal axis: episode number within each show\u2019s run, so episode 50 meets episode 50. Dots: episodes. Hover or tap a dot.'
-      : 'Nielsen linear first-airing figures, millions of US viewers. Dots: episodes. Hover or tap a dot.')+
-    (s2.yLog ? ' Y-axis is logarithmic.' : '');
+  host.appendChild(svg);
 }
 
-playBtn2.addEventListener('click',()=>{
-  if(s2PlayRAF){ s2CancelPlay(); return; }
-  const cfg=S2SETS[s2.set], plotW=S2W-S2L-S2R, t0=performance.now(), DUR=9000;
-  playBtn2.innerHTML='&#9632; Stop'; s2Cursor.setAttribute('visibility','visible');
-  function fr(now){
-    const p=Math.min(1,(now-t0)/DUR), e=1-Math.pow(1-p,3), w=e*plotW;
-    s2Clip.setAttribute('width',w);
-    const cx=S2L+w; s2Cursor.setAttribute('x1',cx); s2Cursor.setAttribute('x2',cx);
-    yearOut2.textContent=(s2.xMode==='air')?String(Math.floor(cfg.y0+p*(cfg.y1-cfg.y0))):'';
-    if(p<1){ s2PlayRAF=requestAnimationFrame(fr); }
-    else{ s2PlayRAF=null; playBtn2.innerHTML='&#9654; Play it';
-      s2Cursor.setAttribute('visibility','hidden'); s2Clip.setAttribute('width',plotW); yearOut2.textContent=''; }
-  }
-  s2PlayRAF=requestAnimationFrame(fr);
-});
-if(RM){ playBtn2.style.display='none'; }
-
-document.querySelectorAll('.setbtn').forEach(b=>b.addEventListener('click',()=>{
-  if(b.dataset.set===s2.set) return;
-  s2.set=b.dataset.set; s2.hidden.clear();
-  document.querySelectorAll('.setbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
-  gcEvent('set-'+s2.set);
-  s2Render(true);
-}));
-document.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(b=>b.addEventListener('click',()=>{
-  if(b.dataset.x===s2.xMode) return;
-  s2.xMode=b.dataset.x;
-  document.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
-  s2Render(false);
-}));
-document.querySelectorAll('.ytoggle .xbtn').forEach(b=>b.addEventListener('click',()=>{
-  const log=b.dataset.y==='log'; if(log===s2.yLog) return;
-  s2.yLog=log;
-  document.querySelectorAll('.ytoggle .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
-  gcEvent('ylog-'+(log?'log':'lin'));
-  s2Render(false);
-}));
-document.getElementById('dotsbtn2').addEventListener('click',function(){
-  s2.dotsOnly=!s2.dotsOnly;
-  this.setAttribute('aria-pressed',String(s2.dotsOnly));
-  s2svg.querySelectorAll('.s2-line').forEach(l=>{ l.style.display=s2.dotsOnly?'none':''; });
-});
-new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting&&!s2.sawSection){ s2.sawSection=true; gcEvent('sitcoms-section'); } }); },{threshold:.25}).observe(document.getElementById('sitcoms'));
-s2Render(true);
 
 /* ============ EMAIL (mailto capture: zero-backend, honest) ============ */
 document.getElementById('emform').addEventListener('submit',function(ev){
