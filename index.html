@@ -779,7 +779,7 @@ DATA.shows.forEach((s)=>{
   const step=vmax>10?3:(vmax>4?2:1);
   const X=i=>L+i/(n-1)*(W-L-R), Y=v=>T+(1-v/vmax)*(H-T-B);
   let bounds=[0]; s.seasons.forEach(sn=>bounds.push(bounds[bounds.length-1]+sn.episodes));
-  bounds.slice(1,-1).forEach(b=>{ const x=X(b-0.5); el('line',{x1:x,x2:x,y1:T,y2:H-B,stroke:'#e6d9bd','stroke-width':1},svg); });
+  bounds.slice(1,-1).forEach(b=>{ const x=X(b-0.5); el('line',{x1:x,x2:x,y1:T,y2:H-B,stroke:'#e6d9bd','stroke-width':0.75,'stroke-dasharray':'3 3'},svg); });
   s.seasons.forEach((sn,k)=>{ const mid=(bounds[k]+bounds[k+1]-1)/2;
     const t=el('text',{x:X(mid),y:T-14,fill:'#8d867a','font-size':12,'text-anchor':'middle'},svg); t.textContent='S'+sn.season; });
   for(let v=0;v<=vmax;v+=step){ el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:'#e6d9bd','stroke-width':1},svg);
