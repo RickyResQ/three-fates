@@ -19,7 +19,7 @@
 <style>
 :root{
   --bg:#FFF1E5; --ink:#33302E; --muted:#5c564d; --faint:#8d867a; --line:#e0d3ba;
-  --twd:#D55E00; --got:#0072B2; --bb:#E69F00; --hotd:#CC79A7;
+  --twd:#D55E00; --got:#0072B2; --bb:#B37400; --hotd:#A24D7E;
   --accent:#990F3D;
   --serif:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -321,11 +321,11 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 <section class="showsec" id="show-2">
   <div class="secnum">III.</div>
   <div class="showhead">
-    <span class="cdot" style="background:#E69F00"></span>
+    <span class="cdot" style="background:#B37400"></span>
     <h2>Breaking Bad</h2><span class="badge">Complete</span>
   </div>
   <div class="showmeta">AMC · 2008-2013 · 62 episodes</div>
-  <div class="secstat"><span class="secstat-num" data-count="7.3" data-fmt="mult1" style="color:#E69F00">7.3×</span><span class="secstat-txt">Premiere to finale: 1.41M → 10.28M. The only ascent.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="7.3" data-fmt="mult1" style="color:#B37400">7.3×</span><span class="secstat-txt">Premiere to finale: 1.41M → 10.28M. The only ascent.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-2" viewBox="0 0 1000 420" role="img" aria-label="Breaking Bad per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-2" min="0" max="61" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-2"></div></div>
@@ -341,11 +341,11 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 <section class="showsec" id="show-3">
   <div class="secnum">IV.</div>
   <div class="showhead">
-    <span class="cdot" style="background:#CC79A7"></span>
+    <span class="cdot" style="background:#A24D7E"></span>
     <h2>House of the Dragon</h2><span class="badge ongoing">Ongoing</span>
   </div>
   <div class="showmeta">HBO · 2022- · 26 episodes</div>
-  <div class="secstat"><span class="secstat-num" data-count="9" data-fmt="intx" style="color:#CC79A7">9×</span><span class="secstat-txt">S1 premiere: 2.17M linear → 20M total. The streaming era, in one number.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="9" data-fmt="intx" style="color:#A24D7E">9×</span><span class="secstat-txt">S1 premiere: 2.17M linear → 20M total. The streaming era, in one number.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-3" viewBox="0 0 1000 420" role="img" aria-label="House of the Dragon per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-3" min="0" max="25" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-3"></div></div>
@@ -381,11 +381,11 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 <section class="showsec" id="show-5">
   <div class="secnum">VI.</div>
   <div class="showhead">
-    <span class="cdot" style="background:#F0E442"></span>
+    <span class="cdot" style="background:#9A7200"></span>
     <h2>Lost</h2><span class="badge">Complete</span>
   </div>
   <div class="showmeta">ABC · 2004-2010 · 121 episodes</div>
-  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1" style="color:#F0E442">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1" style="color:#9A7200">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-5" viewBox="0 0 1000 420" role="img" aria-label="Lost per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-5" min="0" max="120" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-5"></div></div>
@@ -510,10 +510,10 @@ window.addEventListener('scroll',hideTip,{passive:true});
 const VW=1000, VH=520, VL=56, VR=20, VT=70, VB=44;
 const VT0=new Date('2008-01-01').getTime(), VT1=new Date('2023-06-01').getTime();
 const VX=t=>VL+(t-VT0)/(VT1-VT0)*(VW-VL-VR), VY=v=>VT+(1-v/18)*(VH-VT-VB);
-const VSHOWS=[['The Walking Dead','#D55E00','twd'],['Game of Thrones','#0072B2','got'],['Breaking Bad','#E69F00','bb']];
+const VSHOWS=[['The Walking Dead','#D55E00','twd'],['Game of Thrones','#0072B2','got'],['Breaking Bad','#B37400','bb']];
 const VPAT={'twd':'','got':'12,6','bb':'3,3'};
 const VSHAPE={'twd':'circle','got':'square','bb':'triangle'};
-const PCOL={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#E69F00','House of the Dragon':'#CC79A7','Better Call Saul':'#8C564B','Lost':'#F0E442'};
+const PCOL={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#9A7200'};
 const byName={}; DATA.shows.forEach(s=>byName[s.show]=s);
 const PSHAPE={'The Walking Dead':'circle','Game of Thrones':'square','Breaking Bad':'triangle','House of the Dragon':'diamond','Better Call Saul':'cross','Lost':'star'};
 const VG={}; let gUnder, gNotes, clipRect, playCursor;
@@ -559,7 +559,7 @@ const VG={}; let gUnder, gNotes, clipRect, playCursor;
   // peak annotations (hidden until step 5)
   gNotes=el('g',{id:'v-notes',opacity:0},svg);
   const notes=[['#D55E00','2014-10-12',17.29,'Peak of cable: 17.29M',18,-14,'start'],
-               ['#E69F00','2013-09-29',10.28,'Felina: 10.28M',-8,30,'middle'],
+               ['#B37400','2013-09-29',10.28,'Felina: 10.28M',-8,30,'middle'],
                ['#0072B2','2019-05-19',13.61,'Finale: 13.61M',10,-30,'start']];
   notes.forEach(([col,air,v,label,dx,dy,anchor])=>{ const x=VX(new Date(air+'T12:00:00').getTime()), y=VY(v);
     el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gNotes);
@@ -864,7 +864,7 @@ const pIO=new IntersectionObserver(es=>{
 pAuto.forEach(a=>pIO.observe(a.svg));
 
 /* ================= SITCOM VERSUS CHART (v2) ================= */
-const S2COLOR={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#E69F00','House of the Dragon':'#CC79A7','Better Call Saul':'#8C564B','Lost':'#F0E442','Seinfeld':'#009E73','Friends':'#56B4E9','The Office':'#000000'};
+const S2COLOR={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#9A7200','Seinfeld':'#009E73','Friends':'#56B4E9','The Office':'#000000'};
 const S2DASH={'The Walking Dead':'','Game of Thrones':'12,6','Breaking Bad':'3,3','House of the Dragon':'16,5,3,5','Better Call Saul':'2,2','Lost':'10,4','Seinfeld':'6,6','Friends':'2,5','The Office':'20,6,3,6,3,6'};
 const S2SHAPE={'The Walking Dead':'circle','Game of Thrones':'square','Breaking Bad':'triangle','House of the Dragon':'diamond','Better Call Saul':'cross','Lost':'star','Seinfeld':'circle','Friends':'square','The Office':'triangle'};
 const S2SETS={
