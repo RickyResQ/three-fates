@@ -764,9 +764,15 @@ function s2Render(animate){
   cfg.notes.forEach(([nm,air,label,dx,dy,anchor])=>{
     if(s2.hidden.has(nm)) return;
     const eps=epsOf[nm]; if(!eps) return;
-    const ep=eps.find(e=>e.air===air); if(!ep) return;
+    const cands=eps.filter(e=>e.air===air); if(!cands.length) return;
+    const ep=cands.reduce((a,b)=>(b.viewers>a.viewers?b:a));
     const x=X(ep), y=Y(ep.viewers), col=S2COLOR[nm];
-    el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gN);
+    const nc=el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gN);
+    const nh=()=>cardHTML(ep);
+    nc.addEventListener('mouseenter',ev=>showTip(nh(),ev.clientX,ev.clientY));
+    nc.addEventListener('mousemove',ev=>showTip(nh(),ev.clientX,ev.clientY));
+    nc.addEventListener('mouseleave',hideTip);
+    nc.addEventListener('click',ev=>showTip(nh(),ev.clientX,ev.clientY));
     el('line',{x1:x,y1:y,x2:x+dx,y2:y+dy,stroke:col,'stroke-width':1,opacity:.75},gN);
     const t=el('text',{x:x+dx+(anchor==='middle'?0:7),y:y+dy+(dy<0?-7:17),fill:col,'font-size':13.5,'font-weight':700,'text-anchor':anchor},gN);
     t.textContent=label;
