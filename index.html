@@ -1085,7 +1085,7 @@ function makeCompare(rootId, cfgKey, viewEvent){  const root=document.getElement
       const lg=el('g',{'class':'dlabel',tabindex:'0',role:'button',
         'aria-pressed':String(st.focus===it.name),
         'aria-label':(st.focus===it.name
-          ? (SHOWSEC[it.name] ? 'Jump to the '+it.name+' section' : 'Show all shows')
+          ? (SHOWSEC[it.name] ? 'Jump to '+(it.name.indexOf('The ')===0?'':'the ')+it.name+' section' : 'Show all shows')
           : 'Isolate '+it.name+' on the chart')},g);
       if(it.dimmed) lg.setAttribute('opacity','.42');
       el('line',{x1:it.x+3,y1:it.y,x2:it.lx-3,y2:it.ly,stroke:'#c9bda3','stroke-width':1},lg);
