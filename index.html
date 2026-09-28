@@ -42,13 +42,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 .scrolly{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:56px;margin-top:54px;align-items:start}
 .scrolly-text{grid-column:1;grid-row:1}
 .scrolly-vis{grid-column:2;grid-row:1;position:sticky;top:5vh}
-.vizhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:10px;margin-bottom:6px}
+.vizhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:10px;margin-bottom:6px}
 .vizhead .vtitle{font-family:var(--serif);font-size:22px}
 .vizhead .vtitle em{font-style:italic;color:var(--muted);font-size:15px;font-family:var(--sans)}
-.playbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
+.playbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:13px 16px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
 .playbtn:hover{border-color:var(--muted)}
 .yearout{font-family:var(--serif);font-size:20px;color:var(--muted);min-width:52px;text-align:right}
-.viztools{display:flex;align-items:center;gap:12px}
+.viztools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 svg#versus{width:100%;height:auto;display:block}
 .vlegend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 0;font-size:13px;color:var(--muted)}
 .vlegend .cdot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:6px}
@@ -164,7 +164,7 @@ button.mnum:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .bridge{margin-top:48px}
   .vizhead .vtitle{font-size:18px}
   .vizhead .vtitle em{display:none}
-  .playbtn{white-space:nowrap;padding:7px 13px;font-size:12.5px}
+  .playbtn{white-space:nowrap;padding:13px 13px;font-size:12.5px}
   .yearout{font-size:16px;min-width:38px}
 }
 @media (max-width:760px){
@@ -186,15 +186,17 @@ button.mnum:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .setbtn{background:transparent;border:0;padding:8px 20px;font-size:13.5px;font-family:var(--sans);color:var(--muted);cursor:pointer}
 .setbtn.on{background:var(--ink);color:var(--bg);font-weight:700}
 .xtoggle{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
-.xbtn{background:transparent;border:0;padding:6px 13px;font-size:12.5px;font-family:var(--sans);color:var(--muted);cursor:pointer}
+.xbtn{background:transparent;border:0;padding:13px 13px;font-size:12.5px;font-family:var(--sans);color:var(--muted);cursor:pointer}
 .xbtn.on{background:var(--ink);color:var(--bg);font-weight:700}
-.dotsbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
+.dotsbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:13px 13px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
 .dotsbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
-#vlegend2 .legbtn{background:none;border:0;padding:2px 6px;font-size:13px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:var(--sans)}
+#vlegend2 .legbtn{background:none;border:0;padding:2px 6px;font-size:13px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);position:relative}
+#vlegend2 .legbtn::before{content:"";position:absolute;inset:-12px 0}
 #vlegend2 .legbtn[aria-pressed="false"]{opacity:.35}
 #vlegend2 .legbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-.vlegend [data-vslug]{cursor:pointer}
+.vlegend [data-vslug]{cursor:pointer;position:relative}
+.vlegend [data-vslug]::before{content:"";position:absolute;inset:-12px 0}
 .vlegend [data-vslug]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .obits3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px}
 @media (max-width:900px){.obits3{grid-template-columns:1fr}}
