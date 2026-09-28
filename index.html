@@ -1132,13 +1132,13 @@ function makeCompare(rootId, cfgKey, viewEvent){  const root=document.getElement
 
   root.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(b=>b.addEventListener('click',()=>{
     if(b.dataset.x===st.xMode) return;
-    st.xMode=b.dataset.x; st.focus=null;
+    st.xMode=b.dataset.x;
     root.querySelectorAll('.xtoggle:not(.ytoggle) .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
     render(false);
   }));
   root.querySelectorAll('.ytoggle .xbtn').forEach(b=>b.addEventListener('click',()=>{
     const log=b.dataset.y==='log'; if(log===st.yLog) return;
-    st.yLog=log; st.focus=null;
+    st.yLog=log;
     root.querySelectorAll('.ytoggle .xbtn').forEach(x=>{ const on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
     gcEvent('ylog-'+(log?'log':'lin'));
     render(false);
