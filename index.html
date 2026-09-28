@@ -29,7 +29,6 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
 ::selection{background:#990F3D;color:#fff}
 .page{max-width:1180px;margin:0 auto;padding:0 26px}
-.grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.03;mix-blend-mode:multiply}
 
 /* ---------- masthead ---------- */
 .masthead{padding:64px 0 0;max-width:880px}
@@ -43,40 +42,42 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 .scrolly{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:56px;margin-top:54px;align-items:start}
 .scrolly-text{grid-column:1;grid-row:1}
 .scrolly-vis{grid-column:2;grid-row:1;position:sticky;top:5vh}
-.vizhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:6px}
+.vizhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:10px;margin-bottom:6px}
 .vizhead .vtitle{font-family:var(--serif);font-size:22px}
 .vizhead .vtitle em{font-style:italic;color:var(--muted);font-size:15px;font-family:var(--sans)}
-.playbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
+.playbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
 .playbtn:hover{border-color:var(--muted)}
 .yearout{font-family:var(--serif);font-size:20px;color:var(--muted);min-width:52px;text-align:right}
 .viztools{display:flex;align-items:center;gap:12px}
 svg#versus{width:100%;height:auto;display:block}
 .vlegend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 0;font-size:13px;color:var(--muted)}
-.vlegend .cdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.vlegend .cdot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:6px}
 .cap{color:var(--faint);font-size:12.5px;margin:8px 0 0;max-width:70ch}
 .caphead{display:block;font-family:var(--serif);font-size:17px;line-height:1.45;color:var(--ink);margin-bottom:5px;max-width:62ch}
 
 .step{min-height:60vh;display:flex;flex-direction:column;justify-content:center;padding:28px 0;border-top:1px solid var(--line);opacity:.38;transition:opacity .5s ease}
 .step:first-child{border-top:0}
 .step.active{opacity:1}
-.stepnum{font-family:var(--sans);font-weight:700;font-size:12px;color:var(--accent);letter-spacing:.24em;margin-bottom:10px}
+.stepnum{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--muted);margin-bottom:10px}
 .step h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3vw,34px);margin:0 0 10px;line-height:1.15}
 .step h3 .swatch{display:inline-block;width:.55em;height:.55em;border-radius:50%;margin-right:.35em;vertical-align:baseline}
 .step p{font-family:var(--serif);color:var(--ink);font-size:17.5px;line-height:1.65;margin:0 0 .9em;max-width:44ch}
 .step p strong{font-weight:700}
 .giantstat{margin:14px 0 4px}
-.giantstat .n{font-family:var(--serif);font-size:clamp(72px,9vw,120px);line-height:1;color:var(--twd)}
+.giantstat .n{font-family:var(--serif);font-size:clamp(72px,9vw,120px);line-height:1;color:var(--ink)}
 .giantstat .t{color:var(--muted);font-size:14.5px;max-width:38ch;margin-top:6px}
 
 /* ---------- quiz ---------- */
 .quiz{margin:90px 0 0;max-width:720px;border-top:3px solid var(--ink);padding-top:30px}
 .quiz h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,36px);margin:0 0 6px}
 .quiz .qsub{color:var(--muted);font-size:15px;margin:0 0 20px}
-.quizbtns{display:flex;gap:12px;flex-wrap:wrap}
-.quizbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:14px 22px;font-size:16px;cursor:pointer;font-family:var(--sans);transition:border-color .2s,transform .15s}
-.quizbtn:hover:not(:disabled){border-color:var(--muted)}
-.quizbtn:disabled{opacity:.45;cursor:default}
+.quizbtns{display:block;max-width:560px;counter-reset:quizopt}
+.quizbtn{display:block;position:relative;width:100%;text-align:left;counter-increment:quizopt;background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:4px;padding:14px 16px 14px 70px;font-family:var(--serif);font-size:18px;line-height:1.35;cursor:pointer;margin:0 0 10px}
+.quizbtn::before{content:counter(quizopt,upper-alpha);position:absolute;left:0;top:0;bottom:0;width:52px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;color:var(--muted);border-right:1px solid var(--line)}
+.quizbtn:hover:not(:disabled){background:#fffdf8}
+.quizbtn:disabled{opacity:.55;cursor:default}
 .quizbtn.right{border-color:var(--accent);color:var(--accent);opacity:1}
+.quizbtn.right::before{color:var(--accent);border-right-color:var(--accent)}
 .quizbtn.wrong{animation:shake .35s;border-color:#7a3b32}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #quizhint{color:var(--muted);font-size:14px;min-height:22px;margin:12px 0 0}
@@ -86,29 +87,28 @@ svg#versus{width:100%;height:auto;display:block}
 
 /* ---------- show sections ---------- */
 .showsec{margin-top:96px;border-top:3px solid var(--ink);padding-top:26px}
-.secnum{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.26em;color:var(--accent);margin-bottom:8px}
 .showhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .showhead h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,52px);margin:0;line-height:1.05}
 .cdot{width:15px;height:15px;border-radius:50%;flex:none}
-.badge{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+.badge{font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:4px 12px}
 .badge.ongoing{color:#fff;background:var(--hotd);border-color:var(--hotd);font-weight:700}
 .showmeta{color:var(--faint);font-size:13.5px;margin:8px 0 0}
 .secstat{display:flex;align-items:baseline;gap:18px;margin:26px 0 6px;flex-wrap:wrap}
 .secstat-num{font-family:var(--serif);font-size:clamp(54px,7vw,84px);line-height:1;letter-spacing:-.01em}
 .secstat-txt{color:var(--muted);font-size:15px;max-width:44ch}
-.chartwrap{margin-top:20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0 10px}
+.chartwrap{margin-top:20px;padding:14px 0 10px}
 svg.chart{width:100%;height:auto;display:block}
 .moments{list-style:none;margin:26px 0 0;padding:0;max-width:68ch}
 .moments li{display:grid;grid-template-columns:38px 1fr;gap:8px;padding:13px 0;border-top:1px solid var(--line);font-size:14.5px;color:var(--muted)}
 .moments li:first-child{border-top:0}
 .moments strong{color:var(--ink);font-weight:400;font-family:var(--serif);font-style:italic}
-.mnum{font-family:var(--sans);font-weight:700;font-size:13px;color:var(--accent);line-height:1.7}
+.mnum{font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--accent);line-height:1.7}
 .obit{margin-top:34px;max-width:68ch}
-.obit h3{font-family:var(--sans);font-style:normal;font-weight:700;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+.obit h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:16px;color:var(--ink);margin:0 0 16px}
 .obit p{font-family:var(--serif);color:var(--ink);font-size:18px;line-height:1.72;margin:0 0 1.1em}
 .pullquote{border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);padding:22px 0;margin:32px 0;max-width:68ch}
 .pullquote p{font-family:var(--serif);font-style:italic;font-size:clamp(22px,3vw,27px);line-height:1.42;color:var(--ink);margin:0}
-.pullquote .attr{font-family:var(--sans);font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:12px}
+.pullquote .attr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);margin-top:12px}
 
 /* ---------- methodology / email / footer ---------- */
 .method{margin-top:96px;border-top:3px solid var(--ink);padding-top:26px;max-width:860px}
@@ -120,28 +120,28 @@ svg.chart{width:100%;height:auto;display:block}
 .emailbox h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,34px);margin:0 0 8px}
 .emailbox p{color:var(--muted);margin:0 0 20px;font-size:15px}
 .emailbox form{display:flex;gap:10px;flex-wrap:wrap}
-.emailbox input[type=email]{background:#fffdf8;border:1px solid #c9b78f;border-radius:8px;color:var(--ink);padding:13px 16px;font-size:15px;width:min(320px,80vw);font-family:var(--sans)}
-.emailbox button{background:#990F3D;color:#fff;border:0;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--sans)}
+.emailbox input[type=email]{background:#fffdf8;border:1px solid #c9b78f;border-radius:4px;color:var(--ink);padding:13px 16px;font-size:15px;width:min(320px,80vw);font-family:var(--sans)}
+.emailbox button{background:#990F3D;color:#fff;border:0;border-radius:4px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--sans)}
 .emailbox button:hover{background:#7a0c31}
 .done{color:var(--bb);font-size:16px}
 footer{margin:80px 0 46px;border-top:1px solid var(--line);padding-top:18px;color:var(--faint);font-size:12.5px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 footer .colo{font-style:italic}
 
 /* ---------- tooltip / scrubber ---------- */
-#tip{position:fixed;pointer-events:none;background:#fffdf8;border:1px solid #d9c9a8;border-radius:10px;padding:10px 13px;font-size:13px;max-width:270px;display:none;z-index:95;box-shadow:0 10px 28px rgba(74,52,20,.20);color:var(--ink)}
+#tip{position:fixed;pointer-events:none;background:#fffdf8;border:1px solid #d9c9a8;border-radius:6px;padding:10px 13px;font-size:13px;max-width:270px;display:none;z-index:95;box-shadow:0 10px 28px rgba(74,52,20,.20);color:var(--ink)}
 #tip .t{font-weight:700}
 #tip .m{color:var(--muted);font-size:12px}
 #tip .r{color:var(--accent);font-weight:700}
 .scrubwrap{display:none;padding:8px 0 10px}
 .scrub{width:100%;accent-color:#990F3D}
-.scrubcard{background:#fffdf8;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;margin-top:8px;min-height:74px}
+.scrubcard{background:#fffdf8;border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:14px;margin-top:8px;min-height:74px}
 .scrubcard .t{font-weight:700}
 .scrubcard .m{color:var(--muted);font-size:12.5px}
 .scrubcard .r{color:var(--accent);font-weight:700}
 text{font-family:var(--sans)}
 
 /* ---------- v3.2: moment links, play row, callouts ---------- */
-button.mnum{background:none;border:0;padding:2px 6px;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--accent);line-height:1.7;cursor:pointer;border-radius:6px}
+button.mnum{background:none;border:0;padding:2px 6px;font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--accent);line-height:1.7;cursor:pointer;border-radius:4px}
 button.mnum:hover{text-decoration:underline;text-underline-offset:3px}
 button.mnum:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .moments li{scroll-margin-top:24px}
@@ -179,13 +179,13 @@ button.mnum:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sitcoms{margin-top:96px;border-top:3px solid var(--ink);padding-top:26px}
 .sitcoms h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,52px);margin:0;line-height:1.05}
 .sitcom-lede{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.3vw,21px);color:var(--muted);max-width:62ch;margin:14px 0 0}
-.setswitch{display:inline-flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:22px 0 0}
+.setswitch{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:22px 0 0}
 .setbtn{background:transparent;border:0;padding:8px 20px;font-size:13.5px;font-family:var(--sans);color:var(--muted);cursor:pointer}
 .setbtn.on{background:var(--ink);color:var(--bg);font-weight:700}
-.xtoggle{display:inline-flex;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.xtoggle{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .xbtn{background:transparent;border:0;padding:6px 13px;font-size:12.5px;font-family:var(--sans);color:var(--muted);cursor:pointer}
 .xbtn.on{background:var(--ink);color:var(--bg);font-weight:700}
-.dotsbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:16px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
+.dotsbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
 .dotsbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 #vlegend2 .legbtn{background:none;border:0;padding:2px 6px;font-size:13px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:var(--sans)}
@@ -195,10 +195,6 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 .vlegend [data-vslug]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .obits3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px}
 @media (max-width:900px){.obits3{grid-template-columns:1fr}}
-.obit-ph{border:1.5px dashed var(--faint);border-radius:10px;padding:22px 20px;margin-top:0}
-.obit-ph h4{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
-.ph-tag{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.2em;color:var(--accent);margin-bottom:12px}
-.ph-text{font-family:var(--serif);font-style:italic;color:var(--faint);font-size:15px;margin:12px 0 0}
 
 /* ---------- v4: verdict headlines, rhythm, color discipline ---------- */
 .badge.ongoing{background:var(--ink);border-color:var(--ink)}
@@ -207,7 +203,7 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 .secstat-num{font-size:clamp(54px,7vw,92px)}
 .verdict{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.6vw,50px);line-height:1.1;margin:0 0 12px;max-width:24ch;letter-spacing:-.01em}
 .showsec{display:flex;flex-direction:column}
-.secnum{order:1}.verdict{order:2}.showmeta{order:3}.secstat{order:4}.chartwrap{order:5}.showsec .cap{order:6}.moments{order:7}.obit{order:8}
+.verdict{order:2}.showmeta{order:3}.secstat{order:4}.chartwrap{order:5}.showsec .cap{order:6}.moments{order:7}.obit{order:8}
 .showmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .showname{font-family:var(--serif);font-size:19px}
 /* v4: chart-first on even sections — CSS only, DOM identical (council: gemini) */
@@ -215,11 +211,8 @@ svg#versus2{width:100%;height:auto;display:block;margin-top:6px}
 .showsec:nth-of-type(even) .secstat{order:5}
 .showsec:nth-of-type(even) .cap{order:6}
 
-/* ---------- v4: quiz as oversized tappable cards ---------- */
-.quizbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.quizbtn{padding:28px 18px;font-family:var(--serif);font-size:20px;border-radius:14px;line-height:1.3}
+/* ---------- v4.1: quiz as printed ballot ---------- */
 .quizchart svg{width:100%;height:auto;display:block;margin:4px 0 14px}
-@media (max-width:760px){.quizbtns{grid-template-columns:1fr}}
 
 /* ---------- v4: full-bleed bridge comparison chart ---------- */
 .bridge{margin:96px calc(50% - 50vw) 0;border-top:3px solid var(--ink);border-bottom:1px solid var(--line);padding:26px 0 22px}
@@ -236,7 +229,7 @@ svg.compare{width:100%;height:auto;display:block}
 </head>
 <body>
 <div id="tip"></div>
-<svg class="grain" width="100%" height="100%" aria-hidden="true"><filter id="grainf"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grainf)"/></svg>
+
 <div class="page">
 
 <header class="masthead">
@@ -258,39 +251,40 @@ svg.compare{width:100%;height:auto;display:block}
       <span data-vslug="twd"><span class="cdot" style="background:var(--twd)"></span>The Walking Dead</span>
       <span data-vslug="got"><span class="cdot" style="background:var(--got)"></span>Game of Thrones</span>
       <span data-vslug="bb"><span class="cdot" style="background:var(--bb)"></span>Breaking Bad</span>
+      <span><span style="display:inline-block;width:14px;height:10px;background:rgba(190,170,130,.5);margin-right:6px"></span>US scripted series</span>
     </div>
-    <div class="cap">Nielsen linear first-airing figures, millions of US viewers. Background shading: FX Research annual count of US scripted original series (211 in 2009 &rarr; 599 in 2022).</div>
+    <div class="cap">Nielsen linear first-airing figures, millions of US viewers. Shaded area (right axis): FX Research annual count of US scripted original series, 211 in 2009 &rarr; 599 in 2022.</div>
   </div>
   <div class="scrolly-text">
     <div class="step" data-i="0">
-      <div class="stepnum">PROLOGUE</div>
+      <div class="stepnum">Prologue</div>
       <h3>Three shows, three fates, one chart.</h3>
       <p>Scroll. The lines will draw themselves, one fate at a time.</p>
     </div>
     <div class="step" data-i="1">
-      <div class="stepnum">ACT I</div>
+      <div class="stepnum">The death</div>
       <h3><span class="swatch" style="background:var(--twd)"></span>The Death</h3>
       <p><strong>The Walking Dead</strong> peaked at 17.29 million viewers in October 2014, the biggest scripted audience of the decade, then bled for eight straight years.</p>
       <div class="giantstat"><div class="n" data-count="87" data-fmt="pct">&minus;87%</div>
       <div class="t">of its peak audience gone by the finale &middot; 17.29M &rarr; 2.27M viewers.</div></div>
     </div>
     <div class="step" data-i="2">
-      <div class="stepnum">ACT II</div>
+      <div class="stepnum">The coronation</div>
       <h3><span class="swatch" style="background:var(--got)"></span>The Coronation</h3>
       <p><strong>Game of Thrones</strong> grew every single season, a climb so steady it looks drawn with a ruler. 13.61 million watched the finale. IMDb gave it <strong>4.0</strong>: the most-watched and least-loved episode at once.</p>
     </div>
     <div class="step" data-i="3">
-      <div class="stepnum">ACT III</div>
+      <div class="stepnum">The ascent</div>
       <h3><span class="swatch" style="background:var(--bb)"></span>The Ascent</h3>
       <p><strong>Breaking Bad</strong> premiered to 1.41 million and ended at 10.28, <strong>7.3&times;</strong> its premiere. The only line on this chart that climbs into its ending.</p>
     </div>
     <div class="step" data-i="4">
-      <div class="stepnum">INTERLUDE</div>
+      <div class="stepnum">Interlude</div>
       <h3>Meanwhile, the ocean tripled.</h3>
-      <p>The shading behind the lines is the total number of US scripted series: <strong>211</strong> in 2009, <strong>599</strong> in 2022. The audience didn&rsquo;t leave television. It fragmented, and these three were the last shows big enough to be measured dying.</p>
+      <p>The shaded area behind the lines (right axis) is the total number of US scripted series: <strong>211</strong> in 2009, <strong>599</strong> in 2022. The audience didn&rsquo;t leave television. It fragmented, and these three were the last shows big enough to be measured dying.</p>
     </div>
     <div class="step" data-i="5">
-      <div class="stepnum">EPILOGUE</div>
+      <div class="stepnum">Epilogue</div>
       <h3>Three peaks, three fates.</h3>
       <p>Below: the full record, every episode and every viewer, and four obituaries. <strong>House of the Dragon</strong>, the heir, gets its own section: its fate is still being written.</p>
     </div>
@@ -311,7 +305,6 @@ svg.compare{width:100%;height:auto;display:block}
 
 <section class="bridge" aria-label="Six dramas on one chart">
   <div class="bridge-inner">
-    <div class="kicker">The bridge</div>
     <h2>Six premieres, 522 episodes, <em>one chart.</em></h2>
     <p class="bridge-lede">Every drama on this page, 2004 to 2026, on one ruler. Tap a show to isolate it. Tap it again to jump to its section.</p>
     <div id="cmp-dramas">
@@ -339,7 +332,6 @@ svg.compare{width:100%;height:auto;display:block}
 
 
 <section class="showsec" id="show-0">
-  <div class="secnum">I.</div>
   <h2 class="verdict">The conditions that drew this curve will never exist again.</h2>
   <div class="showmeta"><span class="cdot" style="background:#D55E00"></span><span class="showname">The Walking Dead</span><span>AMC · 2010-2022 · 177 episodes</span><span class="badge">Complete</span></div>
   
@@ -356,10 +348,9 @@ svg.compare{width:100%;height:auto;display:block}
 </section>
 
 <section class="showsec" id="show-1">
-  <div class="secnum">II.</div>
   <h2 class="verdict">The tombstone reads 4.0.</h2>
   <div class="showmeta"><span class="cdot" style="background:#0072B2"></span><span class="showname">Game of Thrones</span><span>HBO · 2011-2019 · 73 episodes</span><span class="badge">Complete</span></div>
-  <div class="secstat"><span class="secstat-num" data-count="4.0" data-fmt="dec1" style="color:#0072B2">4.0</span><span class="secstat-txt">IMDb for a finale 13.61M people watched. The most-watched and least-loved episode at once.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="4.0" data-fmt="dec1">4.0</span><span class="secstat-txt">IMDb for a finale 13.61M people watched. The most-watched and least-loved episode at once.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-1" viewBox="0 0 1000 420" role="img" aria-label="Game of Thrones per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-1" min="0" max="72" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-1"></div></div>
@@ -373,10 +364,9 @@ svg.compare{width:100%;height:auto;display:block}
 </section>
 
 <section class="showsec" id="show-2">
-  <div class="secnum">III.</div>
   <h2 class="verdict">The data says the ascent may never happen again.</h2>
   <div class="showmeta"><span class="cdot" style="background:#B37400"></span><span class="showname">Breaking Bad</span><span>AMC · 2008-2013 · 62 episodes</span><span class="badge">Complete</span></div>
-  <div class="secstat"><span class="secstat-num" data-count="7.3" data-fmt="mult1" style="color:#B37400">7.3×</span><span class="secstat-txt">Premiere to finale: 1.41M → 10.28M. The only ascent.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="7.3" data-fmt="mult1">7.3×</span><span class="secstat-txt">Premiere to finale: 1.41M → 10.28M. The only ascent.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-2" viewBox="0 0 1000 420" role="img" aria-label="Breaking Bad per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-2" min="0" max="61" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-2"></div></div>
@@ -390,10 +380,9 @@ svg.compare{width:100%;height:auto;display:block}
 </section>
 
 <section class="showsec" id="show-3">
-  <div class="secnum">IV.</div>
   <h2 class="verdict">The old charts now describe the audience the way a shadow describes a person.</h2>
   <div class="showmeta"><span class="cdot" style="background:#A24D7E"></span><span class="showname">House of the Dragon</span><span>HBO · 2022- · 26 episodes</span><span class="badge ongoing">Ongoing</span></div>
-  <div class="secstat"><span class="secstat-num" data-count="9" data-fmt="intx" style="color:#A24D7E">9×</span><span class="secstat-txt">S1 premiere: 2.17M linear → 20M total. The streaming era, in one number.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="9" data-fmt="intx">9×</span><span class="secstat-txt">S1 premiere: 2.17M linear → 20M total. The streaming era, in one number.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-3" viewBox="0 0 1000 420" role="img" aria-label="House of the Dragon per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-3" min="0" max="25" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-3"></div></div>
@@ -407,10 +396,9 @@ svg.compare{width:100%;height:auto;display:block}
 </section>
 
 <section class="showsec" id="show-4">
-  <div class="secnum">V.</div>
   <h2 class="verdict">Attention is not the same as love.</h2>
   <div class="showmeta"><span class="cdot" style="background:#8C564B"></span><span class="showname">Better Call Saul</span><span>AMC · 2015-2022 · 63 episodes</span><span class="badge">Complete</span></div>
-  <div class="secstat"><span class="secstat-num" data-count="1.8" data-fmt="dec1" style="color:#8C564B">1.8</span><span class="secstat-txt">million watched “Saul Gone.” 6.88M watched the premiere. The faithful stayed.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="1.8" data-fmt="dec1">1.8</span><span class="secstat-txt">million watched “Saul Gone.” 6.88M watched the premiere. The faithful stayed.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-4" viewBox="0 0 1000 420" role="img" aria-label="Better Call Saul per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-4" min="0" max="62" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-4"></div></div>
@@ -424,10 +412,9 @@ svg.compare{width:100%;height:auto;display:block}
 </section>
 
 <section class="showsec" id="show-5">
-  <div class="secnum">VI.</div>
   <h2 class="verdict">It did not die of quality. It died of the calendar.</h2>
   <div class="showmeta"><span class="cdot" style="background:#007A5E"></span><span class="showname">Lost</span><span>ABC · 2004-2010 · 121 episodes</span><span class="badge">Complete</span></div>
-  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1" style="color:#007A5E">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
+  <div class="secstat"><span class="secstat-num" data-count="23.5" data-fmt="dec1">23.5</span><span class="secstat-txt">million watched the season 2 premiere — the biggest number on this page after The Walking Dead’s peak.</span></div>
   <div class="chartwrap">
     <svg class="chart" id="chart-5" viewBox="0 0 1000 420" role="img" aria-label="Lost per-episode viewership"></svg>
     <div class="scrubwrap"><input type="range" class="scrub" id="scrub-5" min="0" max="120" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-5"></div></div>
@@ -442,7 +429,6 @@ svg.compare{width:100%;height:auto;display:block}
 
 
 <section class="sitcoms" id="sitcoms" aria-label="Three eras of the sitcom">
-  <div class="secnum">VII.</div>
   <div class="showhead">
     <h2>Three Eras of the Sitcom</h2><span class="badge">Complete</span>
   </div>
@@ -565,12 +551,20 @@ const VG={}; let gUnder, gNotes, clipRect, playCursor;
   // undertow (hidden until step 4)
   gUnder=el('g',{id:'v-under',opacity:0},svg);
   const pk=DATA.peaktv, years=Object.keys(pk).filter(k=>k[0]!=='_').map(Number).sort();
-  const cmin=Math.min.apply(null,years.map(y=>pk[y])), cmax=Math.max.apply(null,years.map(y=>pk[y]));
+  const cmax=Math.max.apply(null,years.map(y=>pk[y]));
+  /* v4.1: the peak-TV count is an honest data layer — a flat stepped area at
+     constant alpha with its own right-hand axis and a legend swatch, not a decorative wash. */
+  const uY=v=>VT+(1-v/cmax)*(VH-VT-VB);
+  let uPath='M '+VX(new Date(years[0]+'-01-01').getTime()).toFixed(1)+' '+(VH-VB);
   years.forEach(y=>{ const x0=VX(new Date(y+'-01-01').getTime()), x1=VX(new Date((y+1)+'-01-01').getTime());
-    const a=0.04+0.11*(pk[y]-cmin)/(cmax-cmin);
-    el('rect',{x:x0,y:VT,width:Math.max(0,x1-x0),height:VH-VT-VB,fill:'rgba(190,170,130,'+a.toFixed(3)+')'},gUnder); });
-  [[2009,'start'],[2022,'end']].forEach(([y,anc])=>{ const x=VX(new Date(y+'-01-01').getTime())+(anc==='start'?4:-4);
-    const t=el('text',{x:x,y:VT+16,fill:'#a89d86','font-size':12,'text-anchor':anc},gUnder); t.textContent=pk[y]+' series'; });
+    uPath+=' L '+x0.toFixed(1)+' '+uY(pk[y]).toFixed(1)+' L '+x1.toFixed(1)+' '+uY(pk[y]).toFixed(1); });
+  uPath+=' L '+VX(new Date((years[years.length-1]+1)+'-01-01').getTime()).toFixed(1)+' '+(VH-VB)+' Z';
+  el('path',{d:uPath,fill:'rgba(190,170,130,0.16)'},gUnder);
+  [200,400,600].forEach(v=>{ if(v>cmax) return; const y=uY(v);
+    el('line',{x1:VW-VR-8,x2:VW-VR,y1:y,y2:y,stroke:'#a89d86','stroke-width':1},gUnder);
+    const t=el('text',{x:VW-VR-12,y:y+4,fill:'#a89d86','font-size':11,'text-anchor':'end'},gUnder); t.textContent=v; });
+  const ra=el('text',{x:VW-VR,y:VT-10,fill:'#a89d86','font-size':11,'text-anchor':'end'},gUnder);
+  ra.textContent='US scripted series';
   // grid + axes (always visible: change must read as data changing)
   const gG=el('g',{},svg);
   for(let v=0;v<=18;v+=3){ el('line',{x1:VL,x2:VW-VR,y1:VY(v),y2:VY(v),stroke:'#e6d9bd','stroke-width':1},gG);
