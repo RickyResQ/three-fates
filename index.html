@@ -313,7 +313,7 @@ svg.compare{width:100%;height:auto;display:block}
   <div class="bridge-inner">
     <div class="kicker">The bridge</div>
     <h2>Six premieres, 522 episodes, <em>one chart.</em></h2>
-    <p class="bridge-lede">Every drama on this page, 2004 to 2026, on one ruler. Tap a show to isolate it; tap again to bring the rest back.</p>
+    <p class="bridge-lede">Every drama on this page, 2004 to 2026, on one ruler. Tap a show to isolate it. Tap it again to jump to its section.</p>
     <div id="cmp-dramas">
       <div class="vizhead">
         <div class="vtitle">Six fates, one ruler. <em>every episode, measured the old way</em></div>
@@ -960,8 +960,8 @@ const FOCUS_DIM='#d8cfbd'; /* non-focused series fade to this, never to invisibl
 
 function gcEvent(path){ try{ if(window.goatcounter&&window.goatcounter.count) window.goatcounter.count({path:path,event:true}); }catch(e){} }
 
-function makeCompare(rootId, cfgKey, viewEvent){
-  const root=document.getElementById(rootId);
+const SHOWSEC={"The Walking Dead": "show-0", "Game of Thrones": "show-1", "Breaking Bad": "show-2", "House of the Dragon": "show-3", "Better Call Saul": "show-4", "Lost": "show-5"};
+function makeCompare(rootId, cfgKey, viewEvent){  const root=document.getElementById(rootId);
   const svg=root.querySelector('svg.compare');
   const capEl=root.querySelector('.cap');
   const playBtn=root.querySelector('.playbtn');
@@ -1066,7 +1066,7 @@ function makeCompare(rootId, cfgKey, viewEvent){
     capEl.innerHTML='<span class="caphead">'+esc(cfg.cap)+'</span>'+
       (st.xMode==='ep'
         ? 'Horizontal axis: episode number within each show\u2019s run, so episode 50 meets episode 50. Dots: episodes. Hover or tap a dot. Tap a label to isolate a show.'
-        : 'Nielsen linear first-airing figures, millions of US viewers. Dots: episodes. Hover or tap a dot. Tap a label to isolate a show.')+
+        : 'Nielsen linear first-airing figures, millions of US viewers. Dots: episodes. Hover or tap a dot. Tap a label to isolate a show; tap it again to jump to its section.')+
       (st.yLog ? ' Y-axis is logarithmic.' : '');
   }
 
@@ -1084,7 +1084,9 @@ function makeCompare(rootId, cfgKey, viewEvent){
     arr.forEach(it=>{
       const lg=el('g',{'class':'dlabel',tabindex:'0',role:'button',
         'aria-pressed':String(st.focus===it.name),
-        'aria-label':(st.focus===it.name?'Show all six shows':'Isolate '+it.name)+' on the chart'},g);
+        'aria-label':(st.focus===it.name
+          ? (SHOWSEC[it.name] ? 'Jump to the '+it.name+' section' : 'Show all shows')
+          : 'Isolate '+it.name+' on the chart')},g);
       if(it.dimmed) lg.setAttribute('opacity','.42');
       el('line',{x1:it.x+3,y1:it.y,x2:it.lx-3,y2:it.ly,stroke:'#c9bda3','stroke-width':1},lg);
       let tx;
@@ -1100,7 +1102,15 @@ function makeCompare(rootId, cfgKey, viewEvent){
         if(st.focus===it.name) tx.setAttribute('font-weight','700');
       }
       tx.textContent=it.name;
-      const toggle=()=>{ st.focus=(st.focus===it.name)?null:it.name; gcEvent('focus-'+(st.focus||'all')); render(false); };
+      const toggle=()=>{
+        if(st.focus===it.name){
+          const sec=SHOWSEC[it.name]; /* v4: two-tap jump. First tap spotlights, second tap jumps to the section. */
+          if(sec){ const tgt=document.getElementById(sec);
+            if(tgt) tgt.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
+            gcEvent('jump-'+it.name);
+          } else { st.focus=null; render(false); }
+        } else { st.focus=it.name; gcEvent('focus-'+it.name); render(false); }
+      };
       lg.addEventListener('click',toggle);
       lg.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); toggle(); } });
     });
