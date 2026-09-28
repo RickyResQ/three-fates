@@ -1,0 +1,662 @@
+#!/usr/bin/env python3
+"""Build three-fates.html v3 — paper editorial redesign (FT/Pudding/Reuters patterns).
+Re-run to iterate. Reads dicts from build_page.py (AST, no side effects)."""
+import json, html, datetime, ast
+
+BASE = '/home/hatch/workspace/three-fates'
+data = json.load(open(f'{BASE}/data.json'))
+peaktv = json.load(open(f'{BASE}/peaktv.json'))
+shows = {s['show']: s for s in data['shows']}
+TWD, GOT, BB, HOTD = (shows['The Walking Dead'], shows['Game of Thrones'],
+                      shows['Breaking Bad'], shows['House of the Dragon'])
+
+# Pull MOMENTS / OBITS / HERO_NOTES from the v1 script without executing it.
+_src = open(f'{BASE}/build_page.py').read()
+_tree = ast.parse(_src)
+_vals = {}
+for _node in _tree.body:
+    if (isinstance(_node, ast.Assign) and len(_node.targets) == 1
+            and isinstance(_node.targets[0], ast.Name)
+            and _node.targets[0].id in ('MOMENTS', 'OBITS', 'HERO_NOTES')):
+        _vals[_node.targets[0].id] = ast.literal_eval(_node.value)
+MOMENTS, OBITS, HERO_NOTES = _vals['MOMENTS'], _vals['OBITS'], _vals['HERO_NOTES']
+
+# ---- killer stats, computed from data ----
+_p = max(TWD['episodes'], key=lambda x: x['viewers'])
+_f = TWD['episodes'][-1]
+twd_loss = round((_p['viewers'] - _f['viewers']) / _p['viewers'] * 100)          # 87
+_bb0, _bb1 = BB['episodes'][0], BB['episodes'][-1]
+bb_mult = round(_bb1['viewers'] / _bb0['viewers'], 1)                             # 7.3
+_g = GOT['episodes'][-1]                                                        # finale
+hotd_mult = round(20 / HOTD['episodes'][0]['viewers'])                           # 9
+
+def ep_lookup(show, s, e):
+    return next(p for p in show['episodes'] if p['s'] == s and p['e'] == e)
+
+def fmt_air(a):
+    return datetime.date.fromisoformat(a).strftime('%b %-d, %Y')
+
+def moments_html(show):
+    items = []
+    for i, (s, e, text, _) in enumerate(MOMENTS[show['show']], 1):
+        ep = ep_lookup(show, s, e)
+        imdb = ep['imdb'] if ep['imdb'] is not None else 'n/a'
+        items.append(
+            f'<li><span class="mnum">{i}</span><div><strong>S{s}E{e} \u201c{html.escape(ep["title"])}\u201d</strong>'
+            f' \u00b7 {fmt_air(ep["air"])}, {ep["viewers"]}M viewers, IMDb {imdb}.<br>{text}</div></li>')
+    return '\n'.join(items)
+
+SECNUM = {'The Walking Dead': 'I', 'Game of Thrones': 'II',
+          'Breaking Bad': 'III', 'House of the Dragon': 'IV'}
+PCOL = {'The Walking Dead': '#C23B22', 'Game of Thrones': '#9A7A1A',
+        'Breaking Bad': '#1E7A4C', 'House of the Dragon': '#6C4FA1'}
+CHART_CAPS = {
+    'The Walking Dead': 'Every episode, 2010 to 2022: the longest, steadiest bleed ever measured on cable.',
+    'Game of Thrones': 'Every episode, 2011 to 2019: eight seasons, every one bigger than the last.',
+    'Breaking Bad': 'Every episode, 2008 to 2013: the only ascent on this page.',
+    'House of the Dragon': 'Every episode, 2022 to 2026, linear only. The real audience is somewhere the old ruler cannot reach.',
+}
+PULLQUOTES = {
+    'The Walking Dead': ('The conditions that drew this curve will never exist again.', 'From \u201cThe Death,\u201d below'),
+    'Game of Thrones': ('The tombstone reads 4.0.', 'From \u201cThe Coronation,\u201d below'),
+    'Breaking Bad': ('The data says the ascent may never happen again.', 'From \u201cThe Ascent,\u201d below'),
+    'House of the Dragon': ('The old charts now describe the audience the way a shadow describes a person.', 'From \u201cThe Heir,\u201d below'),
+}
+SECSTAT = {
+    'The Walking Dead': None,  # giant -87% already lives in the scrolly step
+    'Game of Thrones': (f'{_g["imdb"]:.1f}', 'dec1',
+                        f'IMDb for a finale {_g["viewers"]}M people watched. The most-watched and least-loved episode at once.'),
+    'Breaking Bad': (f'{bb_mult:.1f}', 'mult1',
+                     f'Premiere to finale: {_bb0["viewers"]}M \u2192 {_bb1["viewers"]}M. The only ascent.'),
+    'House of the Dragon': (f'{hotd_mult}', 'intx',
+                            f'S1 premiere: {HOTD["episodes"][0]["viewers"]}M linear \u2192 20M total. The streaming era, in one number.'),
+}
+
+def section_html(show, idx):
+    name = show['show']
+    title, *paras = OBITS[name]
+    badge = ('<span class="badge ongoing">Ongoing</span>' if show.get('badge') == 'Ongoing'
+             else '<span class="badge">Complete</span>')
+    pq, pqattr = PULLQUOTES[name]
+    paras_html = ''
+    for j, p in enumerate(paras):
+        paras_html += f'<p>{p}</p>'
+        if j == 1:
+            paras_html += (f'<aside class="pullquote"><p>\u201c{pq}\u201d</p>'
+                           f'<div class="attr">{pqattr}</div></aside>')
+    stat = SECSTAT[name]
+    stat_html = ''
+    if stat:
+        num, fmt, txt = stat
+        stat_html = (f'<div class="secstat"><span class="secstat-num" data-count="{num}" data-fmt="{fmt}"'
+                     f' style="color:{PCOL[name]}">{num}{"\u00d7" if fmt in ("mult1","intx") else ""}</span>'
+                     f'<span class="secstat-txt">{txt}</span></div>')
+    return f'''
+<section class="showsec" id="show-{idx}">
+  <div class="secnum">{SECNUM[name]}.</div>
+  <div class="showhead">
+    <span class="cdot" style="background:{PCOL[name]}"></span>
+    <h2>{html.escape(name)}</h2>{badge}
+  </div>
+  <div class="showmeta">{html.escape(show['network'])} \u00b7 {html.escape(show['years'])} \u00b7 {len(show['episodes'])} episodes</div>
+  {stat_html}
+  <div class="chartwrap">
+    <svg class="chart" id="chart-{idx}" viewBox="0 0 1000 420" role="img" aria-label="{html.escape(name)} per-episode viewership"></svg>
+    <div class="scrubwrap"><input type="range" class="scrub" id="scrub-{idx}" min="0" max="{len(show['episodes'])-1}" value="0" step="1" aria-label="Scrub episodes"><div class="scrubcard" id="scrubcard-{idx}"></div></div>
+  </div>
+  <div class="cap"><span class="caphead">{CHART_CAPS[name]}</span>Nielsen linear first-airing figures, millions of US viewers. Dots: episodes. Bold line: season average. Hover or tap a dot.</div>
+  <ol class="moments">{moments_html(show)}</ol>
+  <article class="obit"><h3>{title}</h3>{paras_html}</article>
+</section>'''
+
+sections = '\n'.join(section_html(s, i) for i, s in enumerate(data['shows']))
+
+methodology_items = ''.join(f'<li>{html.escape(m)}</li>' for m in data['meta']['methodology'])
+
+DATA_JS = json.dumps({'shows': data['shows'], 'peaktv': peaktv, 'meta': data['meta']})
+
+CSS = r"""
+:root{
+  --bg:#FFF1E5; --ink:#33302E; --muted:#5c564d; --faint:#8d867a; --line:#e0d3ba;
+  --twd:#C23B22; --got:#9A7A1A; --bb:#1E7A4C; --hotd:#6C4FA1;
+  --accent:#990F3D;
+  --serif:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:#990F3D;color:#fff}
+.page{max-width:1180px;margin:0 auto;padding:0 26px}
+.grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.03;mix-blend-mode:multiply}
+
+/* ---------- masthead ---------- */
+.masthead{padding:64px 0 0;max-width:880px}
+.kicker{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.masthead h1{font-family:var(--serif);font-weight:400;font-size:clamp(68px,11vw,148px);line-height:.95;margin:.12em 0 .1em;letter-spacing:-.01em}
+.dateline{font-size:13.5px;color:var(--faint);letter-spacing:.06em}
+.lede{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.3vw,21px);color:var(--muted);max-width:62ch;margin:18px 0 0}
+.rule-double{border:0;border-top:2.5px solid var(--ink);border-bottom:1px solid var(--ink);height:7px;margin:34px 0 0;padding:0}
+
+/* ---------- scrollytelling ---------- */
+.scrolly{display:grid;grid-template-columns:minmax(300px,360px) 1fr;gap:56px;margin-top:54px;align-items:start}
+.scrolly-text{grid-column:1;grid-row:1}
+.scrolly-vis{grid-column:2;grid-row:1;position:sticky;top:5vh}
+.vizhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:6px}
+.vizhead .vtitle{font-family:var(--serif);font-size:22px}
+.vizhead .vtitle em{font-style:italic;color:var(--muted);font-size:15px;font-family:var(--sans)}
+.playbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
+.playbtn:hover{border-color:var(--muted)}
+.yearout{font-family:var(--serif);font-size:20px;color:var(--muted);min-width:52px;text-align:right}
+.viztools{display:flex;align-items:center;gap:12px}
+svg#versus{width:100%;height:auto;display:block}
+.vlegend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 0;font-size:13px;color:var(--muted)}
+.vlegend .cdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.cap{color:var(--faint);font-size:12.5px;margin:8px 0 0;max-width:70ch}
+.caphead{display:block;font-family:var(--serif);font-size:17px;line-height:1.45;color:var(--ink);margin-bottom:5px;max-width:62ch}
+
+.step{min-height:60vh;display:flex;flex-direction:column;justify-content:center;padding:28px 0;border-top:1px solid var(--line);opacity:.38;transition:opacity .5s ease}
+.step:first-child{border-top:0}
+.step.active{opacity:1}
+.stepnum{font-family:var(--sans);font-weight:700;font-size:12px;color:var(--accent);letter-spacing:.24em;margin-bottom:10px}
+.step h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3vw,34px);margin:0 0 10px;line-height:1.15}
+.step h3 .swatch{display:inline-block;width:.55em;height:.55em;border-radius:50%;margin-right:.35em;vertical-align:baseline}
+.step p{font-family:var(--serif);color:var(--ink);font-size:17.5px;line-height:1.65;margin:0 0 .9em;max-width:44ch}
+.step p strong{font-weight:700}
+.giantstat{margin:14px 0 4px}
+.giantstat .n{font-family:var(--serif);font-size:clamp(72px,9vw,120px);line-height:1;color:var(--twd)}
+.giantstat .t{color:var(--muted);font-size:14.5px;max-width:38ch;margin-top:6px}
+
+/* ---------- quiz ---------- */
+.quiz{margin:90px 0 0;max-width:720px;border-top:3px solid var(--ink);padding-top:30px}
+.quiz h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,36px);margin:0 0 6px}
+.quiz .qsub{color:var(--muted);font-size:15px;margin:0 0 20px}
+.quizbtns{display:flex;gap:12px;flex-wrap:wrap}
+.quizbtn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:14px 22px;font-size:16px;cursor:pointer;font-family:var(--sans);transition:border-color .2s,transform .15s}
+.quizbtn:hover:not(:disabled){border-color:var(--muted)}
+.quizbtn:disabled{opacity:.45;cursor:default}
+.quizbtn.right{border-color:var(--accent);color:var(--accent);opacity:1}
+.quizbtn.wrong{animation:shake .35s;border-color:#7a3b32}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#quizhint{color:var(--muted);font-size:14px;min-height:22px;margin:12px 0 0}
+#quizanswer{margin-top:6px}
+#quizanswer .payoff{font-family:var(--serif);font-size:21px;line-height:1.5}
+#quizanswer .payoff strong{color:var(--accent);font-weight:400}
+
+/* ---------- show sections ---------- */
+.showsec{margin-top:96px;border-top:3px solid var(--ink);padding-top:26px}
+.secnum{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.26em;color:var(--accent);margin-bottom:8px}
+.showhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.showhead h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,52px);margin:0;line-height:1.05}
+.cdot{width:15px;height:15px;border-radius:50%;flex:none}
+.badge{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+.badge.ongoing{color:#fff;background:var(--hotd);border-color:var(--hotd);font-weight:700}
+.showmeta{color:var(--faint);font-size:13.5px;margin:8px 0 0}
+.secstat{display:flex;align-items:baseline;gap:18px;margin:26px 0 6px;flex-wrap:wrap}
+.secstat-num{font-family:var(--serif);font-size:clamp(54px,7vw,84px);line-height:1;letter-spacing:-.01em}
+.secstat-txt{color:var(--muted);font-size:15px;max-width:44ch}
+.chartwrap{margin-top:20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0 10px}
+svg.chart{width:100%;height:auto;display:block}
+.moments{list-style:none;margin:26px 0 0;padding:0;max-width:68ch}
+.moments li{display:grid;grid-template-columns:38px 1fr;gap:8px;padding:13px 0;border-top:1px solid var(--line);font-size:14.5px;color:var(--muted)}
+.moments li:first-child{border-top:0}
+.moments strong{color:var(--ink);font-weight:400;font-family:var(--serif);font-style:italic}
+.mnum{font-family:var(--sans);font-weight:700;font-size:13px;color:var(--accent);line-height:1.7}
+.obit{margin-top:34px;max-width:68ch}
+.obit h3{font-family:var(--sans);font-style:normal;font-weight:700;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+.obit p{font-family:var(--serif);color:var(--ink);font-size:18px;line-height:1.72;margin:0 0 1.1em}
+.pullquote{border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);padding:22px 0;margin:32px 0;max-width:68ch}
+.pullquote p{font-family:var(--serif);font-style:italic;font-size:clamp(22px,3vw,27px);line-height:1.42;color:var(--ink);margin:0}
+.pullquote .attr{font-family:var(--sans);font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:12px}
+
+/* ---------- methodology / email / footer ---------- */
+.method{margin-top:96px;border-top:3px solid var(--ink);padding-top:26px;max-width:860px}
+.method h2{font-family:var(--serif);font-weight:400;font-size:32px;margin:0 0 10px}
+.method .mlede{color:var(--muted);font-size:15px;margin:0 0 6px;max-width:70ch}
+.method ul{margin:12px 0 0;padding-left:22px;color:var(--muted);font-size:14.5px}
+.method li{margin-bottom:9px}
+.emailbox{margin:80px 0 0;max-width:720px;border:1px solid var(--line);padding:38px 34px}
+.emailbox h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,34px);margin:0 0 8px}
+.emailbox p{color:var(--muted);margin:0 0 20px;font-size:15px}
+.emailbox form{display:flex;gap:10px;flex-wrap:wrap}
+.emailbox input[type=email]{background:#fffdf8;border:1px solid #c9b78f;border-radius:8px;color:var(--ink);padding:13px 16px;font-size:15px;width:min(320px,80vw);font-family:var(--sans)}
+.emailbox button{background:#990F3D;color:#fff;border:0;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--sans)}
+.emailbox button:hover{background:#7a0c31}
+.done{color:var(--bb);font-size:16px}
+footer{margin:80px 0 46px;border-top:1px solid var(--line);padding-top:18px;color:var(--faint);font-size:12.5px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer .colo{font-style:italic}
+
+/* ---------- tooltip / scrubber ---------- */
+#tip{position:fixed;pointer-events:none;background:#fffdf8;border:1px solid #d9c9a8;border-radius:10px;padding:10px 13px;font-size:13px;max-width:270px;display:none;z-index:95;box-shadow:0 10px 28px rgba(74,52,20,.20);color:var(--ink)}
+#tip .t{font-weight:700}
+#tip .m{color:var(--muted);font-size:12px}
+#tip .r{color:var(--accent);font-weight:700}
+.scrubwrap{display:none;padding:8px 0 10px}
+.scrub{width:100%;accent-color:#990F3D}
+.scrubcard{background:#fffdf8;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;margin-top:8px;min-height:74px}
+.scrubcard .t{font-weight:700}
+.scrubcard .m{color:var(--muted);font-size:12.5px}
+.scrubcard .r{color:var(--accent);font-weight:700}
+text{font-family:var(--sans)}
+
+@media (max-width:900px){
+  .scrolly{display:block;margin-top:40px}
+  .scrolly-vis{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 4px}
+  .scrolly-text{margin-top:6px}
+  .step{min-height:48vh}
+  .vizhead .vtitle{font-size:18px}
+  .vizhead .vtitle em{display:none}
+  .playbtn{white-space:nowrap;padding:7px 13px;font-size:12.5px}
+  .yearout{font-size:16px;min-width:38px}
+}
+@media (max-width:760px){
+  .scrubwrap{display:block}
+  .emailbox{padding:28px 20px}
+  .page{padding:0 18px}
+  .obit p{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+"""
+
+BODY = r"""
+<div class="page">
+
+<header class="masthead">
+  <div class="kicker">A ratings obituary in four parts</div>
+  <h1>Three Fates</h1>
+  <div class="dateline">Mesa, Arizona &mdash; September 2026 &middot; Nielsen linear first-airing figures</div>
+  <p class="lede">%%SUBTITLE%%. Every episode, every viewer, measured the old way: the overnight number, before streaming swallowed it.</p>
+  <hr class="rule-double">
+</header>
+
+<section class="scrolly" aria-label="The versus, in five acts">
+  <div class="scrolly-vis">
+    <div class="vizhead">
+      <div class="vtitle">One died. One was crowned. One climbed. <em>three shows, three fates</em></div>
+      <div class="viztools"><span class="yearout" id="yearout"></span><button class="playbtn" id="playbtn">&#9654; Play the decade</button></div>
+    </div>
+    <svg id="versus" viewBox="0 0 1000 520" role="img" aria-label="Versus chart: per-episode viewership for three shows"></svg>
+    <div class="vlegend">
+      <span><span class="cdot" style="background:var(--twd)"></span>The Walking Dead</span>
+      <span><span class="cdot" style="background:var(--got)"></span>Game of Thrones</span>
+      <span><span class="cdot" style="background:var(--bb)"></span>Breaking Bad</span>
+    </div>
+    <div class="cap">Nielsen linear first-airing figures, millions of US viewers. Background shading: FX Research annual count of US scripted original series (211 in 2009 &rarr; 599 in 2022).</div>
+  </div>
+  <div class="scrolly-text">
+    <div class="step" data-i="0">
+      <div class="stepnum">PROLOGUE</div>
+      <h3>Three shows, three fates, one chart.</h3>
+      <p>Scroll. The lines will draw themselves, one fate at a time.</p>
+    </div>
+    <div class="step" data-i="1">
+      <div class="stepnum">ACT I</div>
+      <h3><span class="swatch" style="background:var(--twd)"></span>The Death</h3>
+      <p><strong>The Walking Dead</strong> peaked at 17.29 million viewers in October 2014, the biggest scripted audience of the decade, then bled for eight straight years.</p>
+      <div class="giantstat"><div class="n" data-count="87" data-fmt="pct">&minus;87%</div>
+      <div class="t">of its peak audience gone by the finale &middot; 17.29M &rarr; 2.27M viewers.</div></div>
+    </div>
+    <div class="step" data-i="2">
+      <div class="stepnum">ACT II</div>
+      <h3><span class="swatch" style="background:var(--got)"></span>The Coronation</h3>
+      <p><strong>Game of Thrones</strong> grew every single season, a climb so steady it looks drawn with a ruler. 13.61 million watched the finale. IMDb gave it <strong>4.0</strong>: the most-watched and least-loved episode at once.</p>
+    </div>
+    <div class="step" data-i="3">
+      <div class="stepnum">ACT III</div>
+      <h3><span class="swatch" style="background:var(--bb)"></span>The Ascent</h3>
+      <p><strong>Breaking Bad</strong> premiered to 1.41 million and ended at 10.28, <strong>7.3&times;</strong> its premiere. The only line on this chart that climbs into its ending.</p>
+    </div>
+    <div class="step" data-i="4">
+      <div class="stepnum">INTERLUDE</div>
+      <h3>Meanwhile, the ocean tripled.</h3>
+      <p>The shading behind the lines is the total number of US scripted series: <strong>211</strong> in 2009, <strong>599</strong> in 2022. The audience didn&rsquo;t leave television. It fragmented, and these three were the last shows big enough to be measured dying.</p>
+    </div>
+    <div class="step" data-i="5">
+      <div class="stepnum">EPILOGUE</div>
+      <h3>Three peaks, three fates.</h3>
+      <p>Below: the full record, every episode and every viewer, and four obituaries. <strong>House of the Dragon</strong>, the heir, gets its own section: its fate is still being written.</p>
+    </div>
+  </div>
+</section>
+
+<section class="quiz" aria-label="A question">
+  <h3>Which show lost 87% of its audience?</h3>
+  <p class="qsub">One guess. The data already knows.</p>
+  <div class="quizbtns">
+    <button class="quizbtn" data-show="The Walking Dead">The Walking Dead</button>
+    <button class="quizbtn" data-show="Game of Thrones">Game of Thrones</button>
+    <button class="quizbtn" data-show="Breaking Bad">Breaking Bad</button>
+  </div>
+  <div id="quizhint"></div>
+  <div id="quizanswer" hidden><p class="payoff"><strong>The Walking Dead.</strong> 17.29 million at the peak, 2.27 million at the end, the biggest rise and the longest fall ever measured on cable.</p></div>
+</section>
+
+%%SECTIONS%%
+
+<div class="method">
+  <h2>Data and Methods</h2>
+  <p class="mlede">Every chart on this page is drawn from <strong style="color:var(--ink)">Nielsen linear first-airing figures</strong>, in millions of US viewers. IMDb ratings are per-episode user ratings, which drift over time as votes accumulate.</p>
+  <ul>%%METHODOLOGY%%
+    <li>No public source states its viewing window (Live vs Live+SD vs Live+3); treat cross-era comparisons accordingly.</li>
+    <li>Breaking Bad S1E5 &ldquo;Gray Matter&rdquo; (0.97M) was derived by subtraction from the season total, not measured.</li>
+    <li>House of the Dragon figures are linear-only; HBO&rsquo;s cross-platform totals run 5&ndash;20&times; higher (S1 premiere: 2.17M linear vs 20M total).</li>
+    <li>El Camino is excluded: Netflix reports a different metric, not Nielsen linear.</li>
+  </ul>
+</div>
+
+<div class="emailbox" id="signup">
+  <h2>Every great show gets the Fates treatment.</h2>
+  <p>One email per obituary. No noise. The next Fate drops when the next great show ends.</p>
+  <form id="emform"><input type="email" id="eminput" placeholder="you@example.com" required aria-label="Email address"><button type="submit">Get the next Fate</button></form>
+</div>
+
+<footer>
+  <span>Three Fates &middot; data: Nielsen via Wikipedia episode lists, TV by the Numbers, ShowBuzzDaily &middot; IMDb user ratings &middot; FX Research via trade press &middot; a weekend project</span>
+  <span class="colo">Set in Georgia &amp; the system grotesque. Printed on 100% recycled pixels.</span>
+</footer>
+</div>
+"""
+
+JS = r"""
+const DATA = %%DATAJS%%;
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+const tip = document.getElementById('tip');
+function el(n, attrs, parent){ const e=document.createElementNS(NS,n); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function fmtAir(a){ const d=new Date(a+'T12:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function cardHTML(ep){ const im = ep.imdb==null?'n/a':ep.imdb;
+  return '<div class="t">S'+ep.s+'E'+ep.e+' &ldquo;'+esc(ep.title)+'&rdquo;</div><div class="m">'+fmtAir(ep.air)+' &middot; '+ep.viewers+'M viewers</div><div class="r">IMDb '+im+'</div>'; }
+function showTip(html, x, y){ tip.innerHTML=html; tip.style.display='block';
+  const w=tip.offsetWidth,h=tip.offsetHeight; let lx=x+16, ly=y+16;
+  if(lx+w>window.innerWidth-10) lx=x-w-16; if(ly+h>window.innerHeight-10) ly=y-h-16;
+  lx=Math.max(8,Math.min(lx,window.innerWidth-w-8));
+  ly=Math.max(8,Math.min(ly,window.innerHeight-h-8));
+  tip.style.left=lx+'px'; tip.style.top=ly+'px'; }
+function hideTip(){ tip.style.display='none'; }
+/* touch: no mouseleave, so dismiss the tip on tap-elsewhere or scroll */
+document.addEventListener('touchstart',ev=>{ try{ if(!ev.target.closest('circle')) hideTip(); }catch(e){ hideTip(); } },{passive:true});
+window.addEventListener('scroll',hideTip,{passive:true});
+
+/* ================= VERSUS CHART ================= */
+const VW=1000, VH=520, VL=56, VR=20, VT=70, VB=44;
+const VT0=new Date('2008-01-01').getTime(), VT1=new Date('2023-06-01').getTime();
+const VX=t=>VL+(t-VT0)/(VT1-VT0)*(VW-VL-VR), VY=v=>VT+(1-v/18)*(VH-VT-VB);
+const VSHOWS=[['The Walking Dead','#C23B22','twd'],['Game of Thrones','#9A7A1A','got'],['Breaking Bad','#1E7A4C','bb']];
+const PCOL={'The Walking Dead':'#C23B22','Game of Thrones':'#9A7A1A','Breaking Bad':'#1E7A4C','House of the Dragon':'#6C4FA1'};
+const byName={}; DATA.shows.forEach(s=>byName[s.show]=s);
+const VG={}; let gUnder, gNotes, clipRect, playCursor;
+
+(function buildVersus(){
+  const svg=document.getElementById('versus');
+  const defs=el('defs',{},svg);
+  const cp=el('clipPath',{id:'timeclip'},defs);
+  clipRect=el('rect',{id:'timecliprect',x:VL,y:0,width:VW-VL-VR,height:VH},cp);
+  // undertow (hidden until step 4)
+  gUnder=el('g',{id:'v-under',opacity:0},svg);
+  const pk=DATA.peaktv, years=Object.keys(pk).filter(k=>k[0]!=='_').map(Number).sort();
+  const cmin=Math.min.apply(null,years.map(y=>pk[y])), cmax=Math.max.apply(null,years.map(y=>pk[y]));
+  years.forEach(y=>{ const x0=VX(new Date(y+'-01-01').getTime()), x1=VX(new Date((y+1)+'-01-01').getTime());
+    const a=0.04+0.11*(pk[y]-cmin)/(cmax-cmin);
+    el('rect',{x:x0,y:VT,width:Math.max(0,x1-x0),height:VH-VT-VB,fill:'rgba(190,170,130,'+a.toFixed(3)+')'},gUnder); });
+  [[2009,'start'],[2022,'end']].forEach(([y,anc])=>{ const x=VX(new Date(y+'-01-01').getTime())+(anc==='start'?4:-4);
+    const t=el('text',{x:x,y:VT+16,fill:'#a89d86','font-size':12,'text-anchor':anc},gUnder); t.textContent=pk[y]+' series'; });
+  // grid + axes (always visible: change must read as data changing)
+  const gG=el('g',{},svg);
+  for(let v=0;v<=18;v+=3){ el('line',{x1:VL,x2:VW-VR,y1:VY(v),y2:VY(v),stroke:'#e6d9bd','stroke-width':1},gG);
+    const t=el('text',{x:VL-10,y:VY(v)+4,fill:'#8d867a','font-size':12,'text-anchor':'end'},gG); t.textContent=v+'M'; }
+  for(let y=2008;y<=2022;y+=2){ const x=VX(new Date(y+'-01-01').getTime());
+    const t=el('text',{x:x,y:VH-16,fill:'#8d867a','font-size':12,'text-anchor':'middle'},gG); t.textContent=y; }
+  // show lines (clipped for play mode; per-show groups toggled by steps)
+  const gL=el('g',{'clip-path':'url(#timeclip)'},svg);
+  VSHOWS.forEach(([name,color,slug])=>{
+    const s=byName[name], g=el('g',{id:'vg-'+slug,opacity:0},gL);
+    const pts=s.episodes.map(ep=>[VX(new Date(ep.air+'T12:00:00').getTime()),VY(ep.viewers)]);
+    const pl=el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:color,'stroke-width':2.4,opacity:.95},g);
+    const gd=el('g',{opacity:0},g);
+    pts.forEach((p,i)=>{ const ep=s.episodes[i];
+      const c=el('circle',{cx:p[0],cy:p[1],r:2.6,fill:color,opacity:.9},gd);
+      const h=()=>cardHTML(ep);
+      c.addEventListener('mouseenter',ev=>showTip(h(),ev.clientX,ev.clientY));
+      c.addEventListener('mousemove',ev=>showTip(h(),ev.clientX,ev.clientY));
+      c.addEventListener('mouseleave',hideTip);
+      c.addEventListener('click',ev=>showTip(h(),ev.clientX,ev.clientY));
+    });
+    VG[slug]={g:g,pl:pl,gd:gd};
+  });
+  // peak annotations (hidden until step 5)
+  gNotes=el('g',{id:'v-notes',opacity:0},svg);
+  const notes=[['#C23B22','2014-10-12',17.29,'Peak of cable: 17.29M',18,-14,'start'],
+               ['#1E7A4C','2013-09-29',10.28,'Felina: 10.28M',-8,30,'middle'],
+               ['#9A7A1A','2019-05-19',13.61,'Finale: 13.61M',10,-30,'start']];
+  notes.forEach(([col,air,v,label,dx,dy,anchor])=>{ const x=VX(new Date(air+'T12:00:00').getTime()), y=VY(v);
+    el('circle',{cx:x,cy:y,r:5,fill:col,stroke:'#FFF1E5','stroke-width':2},gNotes);
+    el('line',{x1:x,y1:y,x2:x+dx,y2:y+dy,stroke:col,'stroke-width':1,opacity:.75},gNotes);
+    const t=el('text',{x:x+dx+(anchor==='middle'?0:7),y:y+dy+(dy<0?-7:17),fill:col,'font-size':13.5,'font-weight':700,'text-anchor':anchor},gNotes);
+    t.textContent=label; });
+  // play cursor
+  playCursor=el('line',{x1:-10,x2:-10,y1:VT,y2:VH-VB,stroke:'#33302E','stroke-width':1.5,opacity:.85,visibility:'hidden'},svg);
+})();
+
+function vShow(slug, animate){
+  const o=VG[slug]; if(!o||o.g.getAttribute('opacity')==='1') return;
+  o.g.setAttribute('opacity',1);
+  const pl=o.pl, len=pl.getTotalLength();
+  if(RM||!animate){ pl.style.strokeDasharray='none'; pl.style.strokeDashoffset='0'; }
+  else{
+    pl.style.transition='none'; pl.style.strokeDasharray=String(len); pl.style.strokeDashoffset=String(len);
+    void pl.getBoundingClientRect();
+    pl.style.transition='stroke-dashoffset 1.9s cubic-bezier(.4,0,.2,1)'; pl.style.strokeDashoffset='0';
+  }
+  o.gd.style.transition=RM?'none':'opacity .8s ease .9s'; o.gd.style.opacity='1';
+}
+
+let curStep=-1;
+function highlight(i){
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',+s.dataset.i===i));
+}
+function setStep(i){
+  if(i<=curStep){ highlight(i); return; }
+  curStep=i;
+  const anim=!RM;
+  if(i>=1) vShow('twd',anim);
+  if(i>=2) vShow('got',anim);
+  if(i>=3) vShow('bb',anim);
+  if(i>=4){ gUnder.style.transition=RM?'none':'opacity 1.4s ease'; gUnder.style.opacity='1'; }
+  if(i>=5){ gNotes.style.transition=RM?'none':'opacity .9s ease'; gNotes.style.opacity='1'; }
+  highlight(i);
+}
+/* keep step 0 lit when the reader is above the first step (IO band misses it) */
+let ticking=false;
+addEventListener('scroll',()=>{
+  if(ticking) return; ticking=true;
+  requestAnimationFrame(()=>{
+    ticking=false;
+    const s0=document.querySelector('.step[data-i="0"]');
+    if(s0 && window.scrollY < s0.offsetTop - window.innerHeight*0.45) highlight(0);
+  });
+},{passive:true});
+
+/* play the decade */
+const playBtn=document.getElementById('playbtn'), yearOut=document.getElementById('yearout');
+let playRAF=null;
+function cancelPlay(){
+  if(!playRAF) return;
+  cancelAnimationFrame(playRAF); playRAF=null;
+  playBtn.innerHTML='&#9654; Play the decade';
+  playCursor.setAttribute('visibility','hidden');
+  clipRect.setAttribute('width',VW-VL-VR); yearOut.textContent='';
+}
+playBtn.addEventListener('click',()=>{
+  if(playRAF){ cancelPlay(); return; }
+  ['twd','got','bb'].forEach(s=>vShow(s,false));
+  gUnder.style.transition='none'; gUnder.style.opacity='1';
+  gNotes.style.transition='none'; gNotes.style.opacity='0';
+  const plotW=VW-VL-VR, t0=performance.now(), DUR=9000;
+  playBtn.innerHTML='&#9632; Stop'; playCursor.setAttribute('visibility','visible');
+  yearOut.textContent='2008';
+  function fr(now){
+    const p=Math.min(1,(now-t0)/DUR), e=1-Math.pow(1-p,3), w=e*plotW;
+    clipRect.setAttribute('width',w);
+    const cx=VL+w; playCursor.setAttribute('x1',cx); playCursor.setAttribute('x2',cx);
+    yearOut.textContent=String(Math.floor(2008+p*(2022.5-2008)));
+    if(p<1){ playRAF=requestAnimationFrame(fr); }
+    else{ playRAF=null; playBtn.innerHTML='&#9654; Play the decade';
+      playCursor.setAttribute('visibility','hidden'); clipRect.setAttribute('width',plotW);
+      yearOut.textContent=''; gNotes.style.transition='opacity .9s ease'; gNotes.style.opacity='1'; }
+  }
+  playRAF=requestAnimationFrame(fr);
+});
+if(RM){ playBtn.style.display='none'; }
+
+/* step observer */
+const stepIO=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ cancelPlay(); setStep(+e.target.dataset.i); } });
+},{rootMargin:'-38% 0px -52% 0px'});
+document.querySelectorAll('.step').forEach(s=>stepIO.observe(s));
+setStep(0); /* axes-only prologue state until the reader scrolls */
+if(RM){ setStep(5); }
+
+/* count-ups */
+function fmtVal(v,f){
+  if(f==='pct') return '\u2212'+Math.round(v)+'%';
+  if(f==='mult1') return v.toFixed(1)+'\u00d7';
+  if(f==='dec1') return v.toFixed(1);
+  if(f==='intx') return Math.round(v)+'\u00d7';
+  return String(v);
+}
+document.querySelectorAll('[data-count]').forEach(elm=>{
+  const target=parseFloat(elm.dataset.count), f=elm.dataset.fmt;
+  if(RM){ elm.textContent=fmtVal(target,f); return; }
+  const cio=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(!e.isIntersecting) return; cio.disconnect();
+      const s=performance.now(), D=1400;
+      function tick(t){ const p=Math.min(1,(t-s)/D), ez=1-Math.pow(1-p,3);
+        elm.textContent=fmtVal(target*ez,f); if(p<1) requestAnimationFrame(tick); }
+      requestAnimationFrame(tick);
+    });
+  },{threshold:.5});
+  cio.observe(elm);
+});
+
+/* guess-then-reveal */
+document.querySelectorAll('.quizbtn').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.show==='The Walking Dead'){
+    b.classList.add('right');
+    document.querySelectorAll('.quizbtn').forEach(x=>{x.disabled=true;});
+    document.getElementById('quizanswer').hidden=false;
+    document.getElementById('quizhint').textContent='';
+  }else{
+    b.classList.add('wrong');
+    document.getElementById('quizhint').textContent='Not that one. Try again.';
+    setTimeout(()=>b.classList.remove('wrong'),400);
+  }
+}));
+
+/* ================= PER-SHOW CHARTS ================= */
+const MOMSLIM={};
+DATA.shows.forEach(s=>{
+  const key=s.show;
+  MOMSLIM[key]=[];
+});
+/* moment lookup injected below */
+const MOMIDX=%%MOMIDX%%;
+DATA.shows.forEach((s,idx)=>{
+  const svg=document.getElementById('chart-'+idx);
+  const W=1000,H=420,L=56,R=20,T=44,B=32, n=s.episodes.length;
+  const vmax={'The Walking Dead':18,'Game of Thrones':14,'Breaking Bad':11,'House of the Dragon':3}[s.show];
+  const step=vmax>10?3:(vmax>4?2:1);
+  const X=i=>L+i/(n-1)*(W-L-R), Y=v=>T+(1-v/vmax)*(H-T-B);
+  let bounds=[0]; s.seasons.forEach(sn=>bounds.push(bounds[bounds.length-1]+sn.episodes));
+  bounds.slice(1,-1).forEach(b=>{ const x=X(b-0.5); el('line',{x1:x,x2:x,y1:T,y2:H-B,stroke:'#e6d9bd','stroke-width':1},svg); });
+  s.seasons.forEach((sn,k)=>{ const mid=(bounds[k]+bounds[k+1]-1)/2;
+    const t=el('text',{x:X(mid),y:T-14,fill:'#8d867a','font-size':12,'text-anchor':'middle'},svg); t.textContent='S'+sn.season; });
+  for(let v=0;v<=vmax;v+=step){ el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:'#e6d9bd','stroke-width':1},svg);
+    const t=el('text',{x:L-10,y:Y(v)+4,fill:'#8d867a','font-size':12,'text-anchor':'end'},svg); t.textContent=v+'M'; }
+  const avgPts=s.seasons.map((sn,k)=>[X((bounds[k]+bounds[k+1]-1)/2),Y(sn.avg)]);
+  el('polyline',{points:avgPts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:PCOL[s.show],'stroke-width':5,opacity:.32,'stroke-linecap':'round'},svg);
+  const pts=s.episodes.map((ep,i)=>[X(i),Y(ep.viewers)]);
+  el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:PCOL[s.show],'stroke-width':1.6,opacity:.92},svg);
+  const dots=[];
+  pts.forEach((p,i)=>{ const ep=s.episodes[i];
+    const c=el('circle',{cx:p[0],cy:p[1],r:3,fill:PCOL[s.show],opacity:.92},svg); dots.push(c);
+    const h=()=>cardHTML(ep);
+    c.addEventListener('mouseenter',ev=>showTip(h(),ev.clientX,ev.clientY));
+    c.addEventListener('mousemove',ev=>showTip(h(),ev.clientX,ev.clientY));
+    c.addEventListener('mouseleave',hideTip);
+    c.addEventListener('click',ev=>showTip(h(),ev.clientX,ev.clientY));
+  });
+  (MOMIDX[s.show]||[]).forEach(([ms,me],k)=>{ const i=s.episodes.findIndex(ep=>ep.s===ms&&ep.e===me); if(i<0) return;
+    const ep=s.episodes[i], x=X(i), y=Y(ep.viewers);
+    el('circle',{cx:x,cy:y,r:9.5,fill:'none',stroke:'#33302E','stroke-width':1.5,opacity:.9},svg);
+    const t=el('text',{x:x,y:y-15,fill:'#33302E','font-size':13,'font-weight':700,'text-anchor':'middle'},svg); t.textContent=(k+1); });
+  const cur=el('line',{x1:-10,x2:-10,y1:T,y2:H-B,stroke:'#33302E','stroke-width':1.5,opacity:.8},svg);
+  const scrub=document.getElementById('scrub-'+idx), scard=document.getElementById('scrubcard-'+idx);
+  const upd=()=>{ const i=+scrub.value, ep=s.episodes[i];
+    cur.setAttribute('x1',X(i)); cur.setAttribute('x2',X(i));
+    dots.forEach((d,j)=>d.setAttribute('r', j===i?6:3));
+    scard.innerHTML=cardHTML(ep); };
+  scrub.addEventListener('input',upd); upd();
+});
+
+/* ============ EMAIL (mailto capture: zero-backend, honest) ============ */
+document.getElementById('emform').addEventListener('submit',function(ev){
+  ev.preventDefault();
+  var em=document.getElementById('eminput').value.trim();
+  var subject=encodeURIComponent('Three Fates list');
+  var body=encodeURIComponent('Add me: '+em);
+  window.location.href='mailto:imcosmoaiagent@gmail.com?subject='+subject+'&body='+body;
+  document.getElementById('signup').innerHTML='<h2>One more tap.</h2><p class="done">Your email app should have opened. Hit send and you\u2019re on the list.</p>';
+});
+"""
+
+# ---- assemble ----
+MOMIDX = json.dumps({k: [[s, e] for s, e, _, _ in v] for k, v in MOMENTS.items()})
+
+GRAIN_SVG = (
+    '<svg class="grain" width="100%" height="100%" aria-hidden="true">'
+    '<filter id="grainf"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>'
+    '<feColorMatrix type="saturate" values="0"/></filter>'
+    '<rect width="100%" height="100%" filter="url(#grainf)"/></svg>'
+)
+
+doc = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Fates, how TV's biggest shows rose, and what happened next</title>
+<meta name="description" content="Per-episode Nielsen ratings for The Walking Dead, Game of Thrones, Breaking Bad and House of the Dragon: three fates: the death, the coronation, the ascent, and the heir.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rickyresq.github.io/three-fates/">
+<meta property="og:title" content="Three Fates">
+<meta property="og:description" content="The Walking Dead lost 87% of its audience. Game of Thrones ended huge and hated. Breaking Bad only climbed. The data, episode by episode.">
+<meta property="og:image" content="https://rickyresq.github.io/three-fates/share/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Three Fates">
+<meta name="twitter:description" content="The Walking Dead lost 87% of its audience. Game of Thrones ended huge and hated. Breaking Bad only climbed. The data, episode by episode.">
+<meta name="twitter:image" content="https://rickyresq.github.io/three-fates/share/og-image.png">
+<style>""" + CSS + """</style>
+</head>
+<body>
+<div id="tip"></div>
+""" + GRAIN_SVG + BODY + """
+<script>""" + JS + """</script>
+</body>
+</html>"""
+
+doc = doc.replace('%%SECTIONS%%', sections)
+doc = doc.replace('%%METHODOLOGY%%', methodology_items)
+doc = doc.replace('%%DATAJS%%', DATA_JS)
+doc = doc.replace('%%MOMIDX%%', MOMIDX)
+doc = doc.replace('%%SUBTITLE%%', html.escape(data['meta']['subtitle']))
+
+open(f'{BASE}/three-fates.html', 'w').write(doc)
+print('wrote', len(doc), 'bytes')
+print('stats check: twd_loss=%d bb_mult=%.1f got_finale_imdb=%s hotd_mult=%d'
+      % (twd_loss, bb_mult, _g['imdb'], hotd_mult))

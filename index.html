@@ -706,7 +706,14 @@ DATA.shows.forEach((s)=>{
   for(let v=0;v<=vmax;v+=step){ el('line',{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:'#e6d9bd','stroke-width':1},svg);
     const t=el('text',{x:L-10,y:Y(v)+4,fill:'#8d867a','font-size':12,'text-anchor':'end'},svg); t.textContent=v+'M'; }
   const avgPts=s.seasons.map((sn,k)=>[X((bounds[k]+bounds[k+1]-1)/2),Y(sn.avg)]);
-  el('polyline',{points:avgPts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:PCOL[s.show],'stroke-width':5,opacity:.32,'stroke-linecap':'round'},svg);
+  const avgStr=avgPts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  el('polyline',{points:avgStr,fill:'none',stroke:PCOL[s.show],'stroke-width':5,opacity:.32,'stroke-linecap':'round'},svg);
+  const avgHit=el('polyline',{points:avgStr,fill:'none',stroke:'#000','stroke-opacity':0,'stroke-width':26},svg);
+  avgHit.style.cursor='help';
+  const avgMsg='<span class="t">Bold line: season average</span><br>The average viewership for each season. The dots are individual episodes.';
+  avgHit.addEventListener('mouseenter',ev=>showTip(avgMsg,ev.clientX,ev.clientY));
+  avgHit.addEventListener('mousemove',ev=>showTip(avgMsg,ev.clientX,ev.clientY));
+  avgHit.addEventListener('mouseleave',hideTip);
   const pts=s.episodes.map((ep,i)=>[X(i),Y(ep.viewers)]);
   el('polyline',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:'none',stroke:PCOL[s.show],'stroke-width':1.6,opacity:.92},svg);
   const dots=[];

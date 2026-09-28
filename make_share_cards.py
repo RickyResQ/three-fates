@@ -98,6 +98,8 @@ for name, color in SHOWS:
 chart(dr, M + 56, 380, W - M, 860, 6, years=True)
 dr.text((M, 912), 'Sources: TV by the Numbers / ShowBuzzDaily via Wikipedia episode lists.',
         font=ImageFont.truetype(SANS, 24), fill=MUTED)
+dr.text((W - M - 60, 912), 'rickyresq.github.io/three-fates',
+        font=ImageFont.truetype(SANS, 24), fill=MUTED, anchor='ra')
 dr.text((W - M, 912), 'OC', font=ImageFont.truetype(SANS, 24), fill=MUTED, anchor='ra')
 im.save(f'{BASE}/share/reddit-versus.png')
 print('wrote share/reddit-versus.png')
