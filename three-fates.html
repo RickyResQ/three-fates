@@ -833,8 +833,8 @@ DATA.shows.forEach((s)=>{
     (MOMIDX[s.show]||[]).slice(0,2).forEach(me2=>{
       const ms=me2[0], me=me2[1];
       const i=s.episodes.findIndex(ep=>ep.s===ms&&ep.e===me); if(i<0) return;
-      const ep=s.episodes[i], x=X(i), y=Y(ep.viewers), mg=momMap[ms+'-'+me];
-      if(!mg) return;
+      const ep=s.episodes[i], x=X(i), y=Y(ep.viewers), mm=momMap[ms+'-'+me];
+      if(!mm) return;
       let label='S'+ms+'E'+me+' \u201c'+ep.title+'\u201d';
       if(label.length>34) label=label.slice(0,33)+'\u2026';
       const hw=label.length*3.4+8, hh=9, pad=4;
@@ -846,8 +846,8 @@ DATA.shows.forEach((s)=>{
       }
       if(!plc) return;
       boxes.push({x:plc.x,y:plc.y,hw:hw,hh:hh});
-      el('line',{x1:x,y1:y,x2:plc.x,y2:plc.y+(plc.y<y?hh:-hh),stroke:'#b7a98c','stroke-width':1},mg);
-      const t=el('text',{x:plc.x,y:plc.y+4,'text-anchor':'middle',fill:'#5c564d','font-size':12},mg);
+      el('line',{x1:x,y1:y,x2:plc.x,y2:plc.y+(plc.y<y?hh:-hh),stroke:'#b7a98c','stroke-width':1},mm.g);
+      const t=el('text',{x:plc.x,y:plc.y+4,'text-anchor':'middle',fill:'#5c564d','font-size':12},mm.g);
       t.textContent=label;
     });
   })();
@@ -935,12 +935,13 @@ const pIO=new IntersectionObserver(es=>{
 pAuto.forEach(a=>pIO.observe(a.svg));
 
 /* ================= COMPARISON CHARTS (v4): direct labels, tap-to-focus ================= */
+const S2X1=new Date("2026-09-01").getTime(); /* right edge of the drama comparison axis */
 const S2COLOR={'The Walking Dead':'#D55E00','Game of Thrones':'#0072B2','Breaking Bad':'#B37400','House of the Dragon':'#A24D7E','Better Call Saul':'#8C564B','Lost':'#007A5E','Seinfeld':'#009E73','Friends':'#56B4E9','The Office':'#000000'};
 const S2DASH={'The Walking Dead':'','Game of Thrones':'12,6','Breaking Bad':'3,3','House of the Dragon':'16,5,3,5','Better Call Saul':'1.5,4','Lost':'10,4,2,4,2,4','Seinfeld':'6,6','Friends':'2,5','The Office':'20,6,3,6,3,6'};
 const S2SHAPE={'The Walking Dead':'circle','Game of Thrones':'square','Breaking Bad':'triangle','House of the Dragon':'diamond','Better Call Saul':'cross','Lost':'star','Seinfeld':'circle','Friends':'square','The Office':'triangle'};
 const S2CFG={
   dramas:{shows:['The Walking Dead','Game of Thrones','Breaking Bad','House of the Dragon','Better Call Saul','Lost'],
-    x0:new Date('2004-01-01').getTime(),x1:VT1,ymax:25,ystep:5,y0:2004,y1:2022.5,
+    x0:new Date("2004-01-01").getTime(),x1:S2X1,ymax:25,ystep:5,y0:2004,y1:2022.5,
     notes:[['Lost','2005-09-21','Peak: 23.47M',14,-8,'start'],
            ['The Walking Dead','2014-10-12','Peak of cable: 17.29M',14,-8,'start'],
            ['Breaking Bad','2013-09-29','Felina: 10.28M',-8,30,'middle'],
